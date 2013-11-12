@@ -1,4 +1,4 @@
-package irc_client;
+package no.hig.irc_client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,14 +9,16 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import irc_client.Language;
-import irc_client.client;
 
+import no.hig.irc_client.Language;
+import no.hig.irc_client.client;
+import jerklib.Session;
 
 
 //hei
 
 public class main extends JFrame{
+private int tabcount=0;
 private client client;
 private JFrame frame;
 	private main(){
@@ -30,10 +32,10 @@ private JFrame frame;
 	
 	
 public void newTab(){
-	 
-	client.newTab("ddd", 0);
-	client.newTab("ff", 1);
-	client.newTab("dd", 2);
+	client.newTab("ddd", tabcount++, "connector" );
+	 Connector con = new Connector(client);
+	
+
 }
 	
 	 public static void main(String[] args) {
@@ -61,12 +63,13 @@ public void newTab(){
          // Define and add two drop down menu to the menubar
          JMenu fileMenu = new JMenu(Language.getMsg("file"));
          JMenu editMenu = new JMenu(Language.getMsg("edit"));
+     //    JMenu connectorMenu = new JMenu(Language.getMsg("New Connection"));
          menuBar.add(fileMenu);
          menuBar.add(editMenu);
 
          // Create and add simple menu item to one of the drop down menu
          JMenuItem newAction = new JMenuItem(Language.getMsg("new"));
-         JMenuItem openAction = new JMenuItem(Language.getMsg("open_file"));
+         JMenuItem conAction = new JMenuItem("new connection");
          JMenuItem saveAction = new JMenuItem(Language.getMsg("save_file"));
          JMenuItem exitAction = new JMenuItem(Language.getMsg("exit"));
          JMenuItem genAction = new JMenuItem(Language.getMsg("export"));
@@ -75,7 +78,7 @@ public void newTab(){
 
          // file menu buttons
          fileMenu.add(newAction);
-         fileMenu.add(openAction);
+         fileMenu.add(conAction);
          fileMenu.add(saveAction);
          fileMenu.addSeparator();
          fileMenu.add(genAction);
@@ -88,12 +91,18 @@ public void newTab(){
          // file menu actions
          newAction.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent ae) {
-                         
+                	
                        
                  }
          });
 
-         openAction.addActionListener(new Load());
+         conAction.addActionListener(new ActionListener(){
+        	  public void actionPerformed(ActionEvent ae) {
+        		  newTab();
+        	  }
+        	 
+        	 
+         } );
 
          saveAction.addActionListener(new Save());
 

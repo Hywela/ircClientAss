@@ -1,4 +1,4 @@
-package irc_client;
+package no.hig.irc_client;
 
 import java.awt.Color;
 import java.awt.FlowLayout;

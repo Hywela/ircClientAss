@@ -1,12 +1,12 @@
-package irc_client;
+package no.hig.irc_client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Save implements ActionListener {
+public class SaveReport implements ActionListener {
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 
 	}

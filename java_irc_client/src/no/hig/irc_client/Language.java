@@ -1,4 +1,4 @@
-package irc_client;
+package no.hig.irc_client;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
