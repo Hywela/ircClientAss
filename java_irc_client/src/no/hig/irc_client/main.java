@@ -32,9 +32,12 @@ private JFrame frame;
 	
 	
 public void newTab(){
-	client.newTab("ddd", tabcount++, "connector" );
-	 Connector con = new Connector(client);
+	client.newTab("ddd", tabcount++, "connector" );	 
 	
+}
+public void newChannelTab(){
+	
+	client.newTab("ddd", tabcount++, "chat" );
 
 }
 	

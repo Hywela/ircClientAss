@@ -14,16 +14,21 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+
 import jerklib.Session;
+import jerklib.events.IRCEvent;
+import jerklib.events.IRCEvent.Type;
+import jerklib.listeners.IRCEventListener;
 import no.hig.irc_client.tabs;
 
-public class client  {
+public class client implements IRCEventListener  {
 	 private JTextField inputField;
 	 public TextArea text;
+	 Session session = null;
 private JFrame frame;
     private final JTabbedPane pane = new JTabbedPane();
     private final JButton b = new JButton("Rename Button");
-
+    
     public client(String title) {
         
     }
@@ -39,63 +44,24 @@ private JFrame frame;
         });
         this.frame.add(b,BorderLayout.NORTH);
         this.frame.add(pane);
-    }
+    }	
 
     public void newTab(String title, int index, String type) {
-     text = new TextArea();
-        	
-        	   JPanel p = new JPanel(new BorderLayout());
-        	   
-        	   
-        	   
-        	   if(type == "connector"){
-        	        
-        		   
-               	
-           		inputField= new JTextField("Input");
-                
-       text.setEditable(false);
-       JScrollPane scrollPane = new JScrollPane(text,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-		        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-       
-       
-           		//  split.add(inputField,JSplitPane.BOTTOM);
-           		
-                  p.add(scrollPane,BorderLayout.CENTER);
-                  
-                 //  p.add(,BorderLayout.CENTER);
-                   p.add(inputField,BorderLayout.SOUTH);
-                 
-                   }
-        	   
-        	   
-        	if(type == "chat"){
-        
-        	
-        	
-        	JList<String> list = new ChannelList();
-        	
-    		inputField= new JTextField("Input");
-          
-    		JScrollPane scrollPane = new JScrollPane(list,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-    		        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    		p.add(scrollPane, BorderLayout.EAST);
+    	
+    	Connector con = null; 
+    	
+    		if(type=="connector"){
+    			
+    			 con = new Connector();
     		
-    		JScrollPane scrollPane2 = new JScrollPane(text,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-    		        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    		///p.add(scrollPane, BorderLayout.EAST);
+    	    }
     		
-    		  JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-    				  scrollPane, scrollPane2);
-    		//  split.add(inputField,JSplitPane.BOTTOM);
-         //   p.add(list,BorderLayout.EAST);
-    		  p.add(split);
-          //  p.add(,BorderLayout.CENTER);
-            p.add(inputField,BorderLayout.SOUTH);
-          
-            }
+    	session = con.getSession();
+    	 session.addIRCEventListener(this);
+     if (session!= null){
+    	
+        	JPanel p = new Tabs_head(new BorderLayout(), type,session);
             pane.add(title,p);
-       
             initTabComponent(index);
         
         pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
@@ -104,14 +70,26 @@ private JFrame frame;
         frame.setSize(new Dimension(700, 300));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        
+     }
     }
-
-
 
     private void initTabComponent(int i) {
         pane.setTabComponentAt(pane.getTabCount()-1,
                  new tabs(pane));
     }
+	@Override
+	public void receiveEvent(IRCEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getType() == Type.CONNECT_COMPLETE)
+		{
+			String channel = "#hyw_test";
+			e.getSession().join(channel);
+			newTab(channel, 0, "chat");
+			
+			 channel = "#test_hywel";
+			e.getSession().join(channel);
+			newTab(channel, 0, "chat");
+		}
+	}
     
 }
