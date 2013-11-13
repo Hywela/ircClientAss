@@ -15,7 +15,7 @@ public class Profile {
 	String altNick2;	
 	
 
-	public Profile(String username, String realName, String currentNick, String primaryNick, String altNick1, String altNick2){
+	public Profile(String username, String realName, String primaryNick, String altNick1, String altNick2){
 		this.username = username;											//username Required
 		this.realName = realName == null ? "" : realName;					//real name can be empty
 		this.primaryNick = primaryNick == null ? username : primaryNick;	//nickname is set to username if empty
@@ -24,7 +24,6 @@ public class Profile {
 		
 		currentNick = primaryNick;
 	}
-
 
 	public String getUsername() {
 		return username;
