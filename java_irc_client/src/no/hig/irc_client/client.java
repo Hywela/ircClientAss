@@ -15,21 +15,25 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import jerklib.Channel;
 import jerklib.Session;
 import jerklib.events.IRCEvent;
+import jerklib.events.MessageEvent;
 import jerklib.events.IRCEvent.Type;
+import jerklib.events.JoinCompleteEvent;
 import jerklib.listeners.IRCEventListener;
 import no.hig.irc_client.tabs;
 
-public class client implements IRCEventListener  {
-	 private JTextField inputField;
-	 public TextArea text;
+public class client  implements IRCEventListener    {
+	
+	
+	 Connector con = null; 
 	 Session session = null;
-private JFrame frame;
+	 private JFrame frame;
     private final JTabbedPane pane = new JTabbedPane();
     private final JButton b = new JButton("Rename Button");
     
-    public client(String title) {
+    public client() {
         
     }
     public client(JFrame frame) {
@@ -46,24 +50,27 @@ private JFrame frame;
         this.frame.add(pane);
     }	
 
-    public void newTab(String title, int index, String type) {
+    public void newTab(String type, String channel) {
     	
-    	Connector con = null; 
+    
+    	
+    
     	
     		if(type=="connector"){
-    			
+    				
     			 con = new Connector();
-    		
+    			 session = con.getSession();
+    			 session.addIRCEventListener(this);
     	    }
     		
-    	session = con.getSession();
-    	 session.addIRCEventListener(this);
+   
+    	 
      if (session!= null){
     	
-        	JPanel p = new Tabs_head(new BorderLayout(), type,session);
-            pane.add(title,p);
-            initTabComponent(index);
-        
+    	 Tabs_head p = new Tabs_head(new BorderLayout(), type, session, channel);
+            pane.add(channel,p);
+            initTabComponent();
+         
         pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
         
        
@@ -71,24 +78,40 @@ private JFrame frame;
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
      }
+     
     }
 
-    private void initTabComponent(int i) {
+    private void initTabComponent() {
         pane.setTabComponentAt(pane.getTabCount()-1,
                  new tabs(pane));
     }
-	@Override
+	
+
+	 
 	public void receiveEvent(IRCEvent e) {
-		// TODO Auto-generated method stub
-		if (e.getType() == Type.CONNECT_COMPLETE)
-		{
-			String channel = "#hyw_test";
-			e.getSession().join(channel);
-			newTab(channel, 0, "chat");
+		
+		
+		 if(e.getType() == Type.CONNECT_COMPLETE) {                
 			
-			 channel = "#test_hywel";
-			e.getSession().join(channel);
-			newTab(channel, 0, "chat");
+
+		 }
+		 if (e.getType() == Type.CHANNEL_MESSAGE)
+		{   
+			MessageEvent me = (MessageEvent)e;
+			 Channel gc = me.getChannel();  
+		
+			//}
+		
+			}
+		else if (e.getType() == Type.JOIN_COMPLETE)
+		{
+		
+			/* say hello and version number */
+		}
+		else
+		{
+		
+			
 		}
 	}
     

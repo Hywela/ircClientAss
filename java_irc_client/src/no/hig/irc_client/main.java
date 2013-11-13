@@ -32,12 +32,17 @@ private JFrame frame;
 	
 	
 public void newTab(){
-	client.newTab("ddd", tabcount++, "connector" );	 
+
+
+	
+
+	client.newTab("connector","Server" );	 
 	
 }
 public void newChannelTab(){
 	
-	client.newTab("ddd", tabcount++, "chat" );
+	client.newTab( "chat", "#hyw_test");
+	client.newTab( "chat", "#test_hywel");
 
 }
 	
@@ -111,7 +116,7 @@ public void newChannelTab(){
          
          conAction.addActionListener(new ActionListener(){
         	  public void actionPerformed(ActionEvent ae) {
-        		  newTab();
+        		  newChannelTab();
         	  }
         	 
         	 

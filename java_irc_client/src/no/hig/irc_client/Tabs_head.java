@@ -12,6 +12,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import jerklib.Channel;
 import jerklib.ConnectionManager;
 import jerklib.Session;
 import jerklib.events.IRCEvent;
@@ -19,22 +20,28 @@ import jerklib.events.JoinCompleteEvent;
 import jerklib.events.MessageEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.listeners.IRCEventListener;
-public class Tabs_head extends JPanel implements IRCEventListener {
+public class Tabs_head extends JPanel {
 	 private JTextField inputField;
 	 public TextArea text;
+	 String channel;
+	 Channel chan;
 	boolean notChat;
-	 public Tabs_head(BorderLayout borderLayout, String type, final Session s) {
+	 public Tabs_head(BorderLayout borderLayout, String type,  Session s, final String channel) {
 		// TODO Auto-generated constructor stub
 		 super(borderLayout);
 		 
 		 text = new TextArea();
      	inputField= new JTextField();
+     
      	
+     	
+     	this.channel = channel;
+     	 chan = new Channel(channel, s);
 		 if(type == "connector"){
   		
   		   notChat = true;
          	
-     		
+  	
           
      		text.setEditable(false);
      		JScrollPane scrollPane = new JScrollPane(text,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -51,14 +58,19 @@ public class Tabs_head extends JPanel implements IRCEventListener {
              }
     	
     	
-		 if(type == "chat"){
+		 if(type == "chat"){	  
+			 s.join(channel);
     	JList<String> list = new ChannelList();
     	notChat = false;
 		
-      
+      	 text.write("Joining Channel : "+ channel);
+      	 
+      	text.setEditable(false);
+ 	
+      	 
 		JScrollPane scrollPane = new JScrollPane(list,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 		        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		add(scrollPane, BorderLayout.EAST);
+		
 		
 		JScrollPane scrollPane2 = new JScrollPane(text,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 		        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -73,51 +85,42 @@ public class Tabs_head extends JPanel implements IRCEventListener {
         add(inputField,BorderLayout.SOUTH);
       
         }
-		 
-			s.addIRCEventListener(this);
+		 inputField.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent b) {
+					// TODO Auto-generated method stub
+					inputField.setText("");
+					text.write(b.getActionCommand());
+					chan.say(b.getActionCommand());
+				}
+			}); 
+		s.addIRCEventListener(new IRCEventListener() {
+			
+			@Override
+			public void receiveEvent(IRCEvent e) {
+				// TODO Auto-generated method stub
+				 if (e.getType() == Type.CHANNEL_MESSAGE)
+					{    
+					 MessageEvent me = (MessageEvent)e;
+					 Channel gc = me.getChannel();
+					 if(channel.equals( gc.getName())){
+						 text.write(me.getMessage());}
+				 }
+				 
+				 if(notChat)
+					 text.write(e.getType() + " " + e.getRawEventData());
+		}
+		});
 		
-	 }
-	 
+	 }	 
 
-		@Override
-		public void receiveEvent(IRCEvent e) {
+	public void setText(String tx){
 		
-			
-			
-	
-			 if (e.getType() == Type.CHANNEL_MESSAGE)
-			{
-				MessageEvent me = (MessageEvent)e;
-				
-				text.write("<" + me.getNick() + ">"+ ":" + me.getMessage());
-			}
-			else if (e.getType() == Type.JOIN_COMPLETE)
-			{
-				final JoinCompleteEvent jce = (JoinCompleteEvent) e;
-					
-				/* say hello and version number */
-				 inputField.addActionListener(new ActionListener() {
-					
-					@Override
-					public void actionPerformed(ActionEvent b) {
-						// TODO Auto-generated method stub
-						inputField.setText("");
-						text.write(b.getActionCommand());
-						jce.getChannel().say( b.getActionCommand() );
-					}
-				}); 
-				
-			}
-			else
-			{
-				if(notChat)
-				text.write(e.getType() + " " + e.getRawEventData());
-				
-			}
-		 
-		 
-		 
 	}
+		 
+	
+
 }
 
 
