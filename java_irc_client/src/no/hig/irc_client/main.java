@@ -71,8 +71,10 @@ public void newChannelTab(){
          menuBar.add(editMenu);
 
          // Create and add simple menu item to one of the drop down menu
-         JMenuItem newAction = new JMenuItem(Language.getMsg("new"));
-         JMenuItem conAction = new JMenuItem("new connection");
+         JMenuItem serverListAction = new JMenuItem(Language.getMsg("serverList"));
+         JMenuItem channelListAction = new JMenuItem(Language.getMsg("channelList"));
+         JMenuItem profileSettingsAction = new JMenuItem(Language.getMsg("profileSettings"));
+         JMenuItem conAction = new JMenuItem("newConnection");
          JMenuItem saveAction = new JMenuItem(Language.getMsg("save_file"));
          JMenuItem exitAction = new JMenuItem(Language.getMsg("exit"));
          JMenuItem genAction = new JMenuItem(Language.getMsg("export"));
@@ -80,36 +82,42 @@ public void newChannelTab(){
          JMenuItem deleteItemAction = new JMenuItem(Language.getMsg("delete"));
 
          // file menu buttons
-         fileMenu.add(newAction);
+         fileMenu.add(serverListAction);
+         fileMenu.add(channelListAction);
          fileMenu.add(conAction);
          fileMenu.add(saveAction);
          fileMenu.addSeparator();
-         fileMenu.add(genAction);
          fileMenu.add(exitAction);
 
          // edit menu buttons
+         editMenu.add(profileSettingsAction);
          editMenu.add(newItemAction);
          editMenu.add(deleteItemAction);
 
          // file menu actions
-         newAction.addActionListener(new ActionListener() {
+         serverListAction.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent ae) {
                 	
                        
                  }
          });
 
+         channelListAction.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent ae) {
+            	
+                   
+             }
+     });
+         
          conAction.addActionListener(new ActionListener(){
         	  public void actionPerformed(ActionEvent ae) {
         		  newTab();
         	  }
         	 
         	 
-         } );
+     });
 
          saveAction.addActionListener(new Save());
-
-         genAction.addActionListener(new SaveReport());
 
          exitAction.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent ae) {
@@ -118,17 +126,12 @@ public void newChannelTab(){
          });
 
          // edit menu button actions
-         newItemAction.addActionListener(new ActionListener() {
-                 public void actionPerformed(ActionEvent ae) {
-                       
-                 }
-         });
-
-         deleteItemAction.addActionListener(new ActionListener() {
-                 public void actionPerformed(ActionEvent ae) {
-                         
-                 }
-         });
+         profileSettingsAction.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent ae) {
+            	
+                   
+             }
+     });
 
  }
 }
