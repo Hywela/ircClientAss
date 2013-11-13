@@ -60,7 +60,7 @@ public class Tabs_head extends JPanel {
     	
 		 if(type == "chat"){	  
 			 s.join(channel);
-    	JList<String> list = new ChannelList();
+    	 ChannelList list = new ChannelList(chan);
     	notChat = false;
 		
       	 text.write("Joining Channel : "+ channel);
@@ -105,7 +105,7 @@ public class Tabs_head extends JPanel {
 					 MessageEvent me = (MessageEvent)e;
 					 Channel gc = me.getChannel();
 					 if(channel.equals( gc.getName())){
-						 text.write(me.getMessage());}
+						 text.write("<"+me.getNick()+"> "+me.getMessage());}
 				 }
 				 
 				 if(notChat)

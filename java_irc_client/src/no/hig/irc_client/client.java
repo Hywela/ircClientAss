@@ -105,6 +105,7 @@ public class client  implements IRCEventListener    {
 			}
 		else if (e.getType() == Type.JOIN_COMPLETE)
 		{
+			
 		
 			/* say hello and version number */
 		}
