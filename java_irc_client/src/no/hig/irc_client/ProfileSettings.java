@@ -58,17 +58,23 @@ public class ProfileSettings extends JDialog {
 		
 		usernameLabel = new JLabel(Language.getMsg("Username"));
 		realNameLabel = new JLabel(Language.getMsg("RealName"));
-		primaryNickLabel = new JLabel(Language.getMsg("PriamryNick"));
+		primaryNickLabel = new JLabel(Language.getMsg("PrimaryNick"));
 		altNick1Label = new JLabel(Language.getMsg("AltNick1"));
 		altNick2Label = new JLabel(Language.getMsg("AltNick2"));
 		username = new JTextField(32);
+		username.setToolTipText(Language.getMsg("Username"));
 		realName = new JTextField(32);
+		realName.setToolTipText(Language.getMsg("RealName"));
 		primaryNick = new JTextField(32);
+		primaryNick.setToolTipText(Language.getMsg("PrimaryNick"));
 		altNick1 = new JTextField(32);
+		altNick1.setToolTipText(Language.getMsg("AltNick1"));
 		altNick2 = new JTextField(32);
-		
+		altNick2.setToolTipText(Language.getMsg("AltNick2"));
 		submit = new JButton(Language.getMsg("Submit"));
+		submit.setToolTipText(Language.getMsg("Submit"));
 		cancel = new  JButton(Language.getMsg("Cancel"));
+		cancel.setToolTipText(Language.getMsg("Cancel"));
 		
 		
 		//Call submit function
