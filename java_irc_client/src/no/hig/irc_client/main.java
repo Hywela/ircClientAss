@@ -35,8 +35,7 @@ public void newTab(){
 
 
 	
-
-	client.newTab("connector","Server" );	 
+ 
 	
 }
 public void newChannelTab(){

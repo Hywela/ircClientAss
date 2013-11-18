@@ -31,23 +31,33 @@ public class client  implements IRCEventListener    {
 	 Session session = null;
 	 private JFrame frame;
     private final JTabbedPane pane = new JTabbedPane();
-    private final JButton b = new JButton("Rename Button");
+    private final JButton b = new JButton("Connect");
     
     public client() {
         
     }
     public client(JFrame frame) {
+    	
         this.frame = frame;
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         b.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                int selectedIndex = pane.getSelectedIndex();
-                pane.setTitleAt(selectedIndex, "Aa");
+                
+                if (con == null){
+                	con = new Connector();
+                	session = con.getSession();
+                	newTab("connector","Server" );	
+                	}else{ session.close("close"); con = null;}
+                
             }
         });
+        
         this.frame.add(b,BorderLayout.NORTH);
         this.frame.add(pane);
+        frame.setSize(new Dimension(700, 300));
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }	
 
     public void newTab(String type, String channel) {
@@ -57,10 +67,7 @@ public class client  implements IRCEventListener    {
     
     	
     		if(type=="connector"){
-    				
-    			 con = new Connector();
-    			 session = con.getSession();
-    			 session.addIRCEventListener(this);
+    		  session.addIRCEventListener(this);
     	    }
     		
    
@@ -74,9 +81,7 @@ public class client  implements IRCEventListener    {
         pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
         
        
-        frame.setSize(new Dimension(700, 300));
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+ 
      }
      
     }
