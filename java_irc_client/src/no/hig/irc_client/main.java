@@ -64,7 +64,7 @@ public void newChannelTab(){
 	public void profileMenu(){
 		ProfileSettings gui = new ProfileSettings(main.this);
 		gui.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		gui.setSize(360, 200);
+		gui.setSize(460, 200);
 		gui.setLocation(300,300);
 		gui.setVisible(true);
 	 }

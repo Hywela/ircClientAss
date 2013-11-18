@@ -10,10 +10,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import no.hig.irc_client.Language;
+
 public class ProfileSettings extends JDialog {
 	
 	Profile profile;
-	JLabel label;
+	JLabel usernameLabel;
+	JLabel realNameLabel;
+	JLabel primaryNickLabel;
+	JLabel altNick1Label;
+	JLabel altNick2Label;
 	JTextField username;
 	JTextField realName;
 	JTextField primaryNick;
@@ -25,14 +31,8 @@ public class ProfileSettings extends JDialog {
 
 	//create profile constructor
 	public ProfileSettings(final JFrame frame){
-		super(frame, "Create Profile");
+		super(frame, Language.getMsg("profileSettings"));
 		setLayout(new FlowLayout());
-		
-		username = new JTextField(30);
-		realName = new JTextField(30);
-		primaryNick = new JTextField(30);
-		altNick1 = new JTextField(30);
-		altNick2 = new JTextField(30);
 
 		addLayout(frame);
 	}
@@ -43,20 +43,32 @@ public class ProfileSettings extends JDialog {
 		super(frame, "Create Profile");
 		setLayout(new FlowLayout());
 		
-		username = new JTextField(prof.getUsername(), 30);
-		realName = new JTextField(prof.getRealName(), 30);
-		primaryNick = new JTextField(prof.getPrimaryNick(), 30);
-		altNick1 = new JTextField(prof.getAltNick1(), 30);
-		altNick2 = new JTextField(prof.getAltNick2(), 30);
-
+		username.setText(prof.getUsername());
+		realName.setText(prof.getRealName());
+		primaryNick.setText(prof.getPrimaryNick());
+		altNick1.setText(prof.getAltNick1());
+		altNick2.setText(prof.getAltNick2());
+		
 		addLayout(frame);
 	}
 	
 	
 	//sets up the UI layout for the profile window and adds all the fields and button listeners
 	private void addLayout(final JFrame frame){
-		submit = new JButton("Submit");
-		cancel = new  JButton("cancel");
+		
+		usernameLabel = new JLabel(Language.getMsg("Username"));
+		realNameLabel = new JLabel(Language.getMsg("RealName"));
+		primaryNickLabel = new JLabel(Language.getMsg("PriamryNick"));
+		altNick1Label = new JLabel(Language.getMsg("AltNick1"));
+		altNick2Label = new JLabel(Language.getMsg("AltNick2"));
+		username = new JTextField(32);
+		realName = new JTextField(32);
+		primaryNick = new JTextField(32);
+		altNick1 = new JTextField(32);
+		altNick2 = new JTextField(32);
+		
+		submit = new JButton(Language.getMsg("Submit"));
+		cancel = new  JButton(Language.getMsg("Cancel"));
 		
 		
 		//Call submit function
@@ -76,14 +88,18 @@ public class ProfileSettings extends JDialog {
 			}
 		});
 		
-		
+		add(usernameLabel);
 		add(username);
+		add(realNameLabel);
 		add(realName);
+		add(primaryNickLabel);
 		add(primaryNick);
+		add(altNick1Label);
 		add(altNick1);
+		add(altNick2Label);
 		add(altNick2);
-		add(cancel);
 		add(submit);
+		add(cancel);
 	}
 	
 	
