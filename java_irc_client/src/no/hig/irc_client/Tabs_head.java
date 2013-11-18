@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -18,13 +19,16 @@ import jerklib.Session;
 import jerklib.events.IRCEvent;
 import jerklib.events.JoinCompleteEvent;
 import jerklib.events.MessageEvent;
+import jerklib.events.NickListEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.listeners.IRCEventListener;
+import jerklib.tasks.TaskImpl;
 public class Tabs_head extends JPanel {
 	 private JTextField inputField;
 	 public TextArea text;
 	 String channel;
 	 Channel chan;
+	 ChannelList list ;
 	boolean notChat;
 	 public Tabs_head(BorderLayout borderLayout, String type,  Session s, final String channel) {
 		// TODO Auto-generated constructor stub
@@ -60,7 +64,7 @@ public class Tabs_head extends JPanel {
     	
 		 if(type == "chat"){	  
 			 s.join(channel);
-    	 ChannelList list = new ChannelList(chan);
+    	  list = new ChannelList();
     	notChat = false;
 		
       	 text.write("Joining Channel : "+ channel);
@@ -95,6 +99,28 @@ public class Tabs_head extends JPanel {
 					chan.say(b.getActionCommand());
 				}
 			}); 
+		 
+		 
+	
+		 s.onEvent(new TaskImpl("NICK_LIST_EVENT")
+			{
+				public void receiveEvent(IRCEvent e)
+				{
+						
+						 
+						 NickListEvent ne = ( NickListEvent ) e;
+						
+						 
+							List<String> players = ne.getNicks();
+							for (String s : players )  text.write("<"+s+">");
+							
+				 
+				}
+			},Type.NICK_LIST_EVENT);
+		 
+		 
+		 
+		 
 		s.addIRCEventListener(new IRCEventListener() {
 			
 			@Override
@@ -110,11 +136,14 @@ public class Tabs_head extends JPanel {
 				 
 				 if(notChat)
 					 text.write(e.getType() + " " + e.getRawEventData());
+				 
+		 
 		}
 		});
 		
 	 }	 
 
+	
 	public void setText(String tx){
 		
 	}

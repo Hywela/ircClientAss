@@ -53,6 +53,7 @@ public class client  implements IRCEventListener    {
             }
         });
         
+     
         this.frame.add(b,BorderLayout.NORTH);
         this.frame.add(pane);
         frame.setSize(new Dimension(700, 300));

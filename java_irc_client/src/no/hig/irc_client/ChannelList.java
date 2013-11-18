@@ -1,33 +1,29 @@
 package no.hig.irc_client;
 
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
 import jerklib.Channel;
+import jerklib.Session;
+import jerklib.events.NickListEvent;
 
 public class ChannelList extends JList<Object> implements ActionListener {
 
+		DefaultListModel<String> listModel;
+	public ChannelList(){
+		
 	
-	public ChannelList(Channel chan){
-	
-	DefaultListModel<String> listModel;
+
 	listModel = new DefaultListModel<String>();
-	listModel.addElement((String) chan.getName().toString());
-	  Iterator<String> nicks = chan.getNicks().iterator();
-      
-      while (nicks.hasNext()){                //does the list contain anymore users?
-              String nextNick;
-              nextNick = nicks.next();        //next element in the list
-              chan.addNick(nicks.toString());   
-                     listModel.addElement((String) nextNick.toString());
-              }	
+
 	
-
-
 
 setListData(listModel.toArray());
 			
@@ -38,4 +34,10 @@ setListData(listModel.toArray());
 		// TODO Auto-generated method stub
 		
 	}
+
+
+public void setNick(String nick){
+	
+	listModel.addElement(nick);
+}
 }
