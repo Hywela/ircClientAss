@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,31 +22,33 @@ import jerklib.events.JoinCompleteEvent;
 import jerklib.events.MessageEvent;
 import jerklib.events.NickListEvent;
 import jerklib.events.IRCEvent.Type;
+import jerklib.events.QuitEvent;
 import jerklib.listeners.IRCEventListener;
 import jerklib.tasks.TaskImpl;
 public class Tabs_head extends JPanel {
 	 private JTextField inputField;
 	 public TextArea text;
-	 String channel;
-	 Channel chan;
-	 ChannelList list ;
+	 
+	 public String channel;
+	 Channel chan; 
+	 DefaultListModel<String> listModel;
+	 JList<DefaultListModel<String>> list;
+	
 	boolean notChat;
 	 public Tabs_head(BorderLayout borderLayout, String type,  Session s, final String channel) {
 		// TODO Auto-generated constructor stub
 		 super(borderLayout);
-		 
+		 listModel = new DefaultListModel<String>();
 		 text = new TextArea();
-     	inputField= new JTextField();
+     	 inputField= new JTextField();
      
      	
      	
-     	this.channel = channel;
+     	 this.channel = channel;
      	 chan = new Channel(channel, s);
 		 if(type == "connector"){
   		
   		   notChat = true;
-         	
-  	
           
      		text.setEditable(false);
      		JScrollPane scrollPane = new JScrollPane(text,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -57,20 +60,20 @@ public class Tabs_head extends JPanel {
             add(scrollPane,BorderLayout.CENTER);
             
            //  p.add(,BorderLayout.CENTER);
-             add(inputField,BorderLayout.SOUTH);
+            add(inputField,BorderLayout.SOUTH);
            
              }
     	
     	
 		 if(type == "chat"){	  
 			 s.join(channel);
-    	  list = new ChannelList();
+    
     	notChat = false;
-		
+    	list = new JList(listModel);
       	 text.write("Joining Channel : "+ channel);
       	 
       	text.setEditable(false);
- 	
+      	
       	 
 		JScrollPane scrollPane = new JScrollPane(list,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 		        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -102,23 +105,33 @@ public class Tabs_head extends JPanel {
 		 
 		 
 	
+		 
 		 s.onEvent(new TaskImpl("NICK_LIST_EVENT")
 			{
 				public void receiveEvent(IRCEvent e)
 				{
-						
-						 
 						 NickListEvent ne = ( NickListEvent ) e;
-						
-						 
+						 text.write("<"+ne.getChannel());
+						 Channel gc = ne.getChannel();
+						 if(channel.equals( gc.getName())){
 							List<String> players = ne.getNicks();
-							for (String s : players )  text.write("<"+s+">");
+							for (String nick : players )listModel.addElement(nick); 
 							
-				 
+						}
 				}
 			},Type.NICK_LIST_EVENT);
 		 
-		 
+		 s.onEvent(new TaskImpl("QUIT")
+			{
+				public void receiveEvent(IRCEvent e)
+				{
+					
+					 QuitEvent quitEvent = (QuitEvent)e;
+			
+                         	
+						}
+				
+			},Type.QUIT);
 		 
 		 
 		s.addIRCEventListener(new IRCEventListener() {
@@ -145,7 +158,7 @@ public class Tabs_head extends JPanel {
 
 	
 	public void setText(String tx){
-		
+		 text.write(tx);
 	}
 		 
 	

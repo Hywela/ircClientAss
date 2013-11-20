@@ -24,7 +24,7 @@ import jerklib.events.JoinCompleteEvent;
 import jerklib.listeners.IRCEventListener;
 import no.hig.irc_client.tabs;
 
-public class client  implements IRCEventListener    {
+public class client      {
 	
 	
 	 Connector con = null; 
@@ -68,10 +68,10 @@ public class client  implements IRCEventListener    {
     
     	
     		if(type=="connector"){
-    		  session.addIRCEventListener(this);
+    		
     	    }
     		
-   
+    		
     	 
      if (session!= null){
     	
@@ -94,32 +94,6 @@ public class client  implements IRCEventListener    {
 	
 
 	 
-	public void receiveEvent(IRCEvent e) {
-		
-		
-		 if(e.getType() == Type.CONNECT_COMPLETE) {                
-			
 
-		 }
-		 if (e.getType() == Type.CHANNEL_MESSAGE)
-		{   
-			MessageEvent me = (MessageEvent)e;
-			 Channel gc = me.getChannel();  
-		
-			//}
-		
-			}
-		else if (e.getType() == Type.JOIN_COMPLETE)
-		{
-			
-		
-			/* say hello and version number */
-		}
-		else
-		{
-		
-			
-		}
-	}
     
 }

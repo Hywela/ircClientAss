@@ -12,20 +12,17 @@ import javax.swing.JList;
 
 import jerklib.Channel;
 import jerklib.Session;
+import jerklib.events.IRCEvent;
 import jerklib.events.NickListEvent;
+import jerklib.events.IRCEvent.Type;
+import jerklib.tasks.TaskImpl;
 
 public class ChannelList extends JList<Object> implements ActionListener {
 
-		DefaultListModel<String> listModel;
+
 	public ChannelList(){
-		
-	
 
-	listModel = new DefaultListModel<String>();
 
-	
-
-setListData(listModel.toArray());
 			
 	
 	}
@@ -38,6 +35,6 @@ setListData(listModel.toArray());
 
 public void setNick(String nick){
 	
-	listModel.addElement(nick);
+	
 }
 }
