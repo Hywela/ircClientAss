@@ -11,10 +11,10 @@ import java.awt.event.*;
  * Contains a JLabel to show the text and
  * a JButton to close the tab it belongs to
  */
-public class tabs extends JPanel {
+public class DeleteTabs extends JPanel {
     private final JTabbedPane pane;
  
-    public tabs(final JTabbedPane pane) {
+    public DeleteTabs(final JTabbedPane pane) {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         if (pane == null) {
@@ -26,7 +26,7 @@ public class tabs extends JPanel {
         //make JLabel read titles from JTabbedPane
         JLabel label = new JLabel() {
             public String getText() {
-                int i = pane.indexOfTabComponent(tabs.this);
+                int i = pane.indexOfTabComponent(DeleteTabs.this);
                 if (i != -1) {
                     return pane.getTitleAt(i);
                 }
@@ -66,7 +66,7 @@ public class tabs extends JPanel {
         }
  
         public void actionPerformed(ActionEvent e) {
-            int i = pane.indexOfTabComponent(tabs.this);
+            int i = pane.indexOfTabComponent(DeleteTabs.this);
             if (i != -1) {
                 pane.remove(i);
                 

@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import no.hig.irc_client.Language;
-import no.hig.irc_client.client;
+import no.hig.irc_client.Client;
 import jerklib.Session;
 
 
@@ -19,29 +19,23 @@ import jerklib.Session;
 
 public class main extends JFrame{
 private int tabcount=0;
-private client client;
+private Client client;
 private JFrame frame;
 	private main(){
 	 frame = new JFrame("");
-	client=new client(frame);
+	client = client.getInstance();
+	client.serFrame(frame);
 		fileMenu();
-		
-		
 		
 	}
 	
 	
 public void newTab(){
 
-
-	
- 
 	
 }
 public void newChannelTab(){
-	
-	client.newTab( "chat", "#hyw_test");
-	client.newTab( "chat", "#test_hywel");
+	client.joinChannel("#test_hywel");
 
 }
 	
