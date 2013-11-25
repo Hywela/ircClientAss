@@ -61,6 +61,18 @@ public void newChannelTab(){
 		gui.setLocation(300,300);
 		gui.setVisible(true);
 	 }
+	
+	public AddServer openNewServerWindow(){
+		AddServer gui = new AddServer(new JFrame());
+		gui.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		gui.setSize(460, 200);
+		gui.setLocation(300,300);
+		gui.setVisible(true);
+		return gui;
+	 }
+	
+		
+	
 	 public void fileMenu() {
 
          JMenuBar menuBar = new JMenuBar();
@@ -102,7 +114,7 @@ public void newChannelTab(){
          // file menu actions
          serverListAction.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent ae) {
-                	
+                	 AddServer server = openNewServerWindow();
                        
                  }
          });
