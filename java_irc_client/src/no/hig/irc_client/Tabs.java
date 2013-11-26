@@ -1,7 +1,7 @@
 package no.hig.irc_client;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -15,7 +15,6 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import jerklib.Channel;
-import jerklib.ConnectionManager;
 import jerklib.Session;
 import jerklib.events.ErrorEvent;
 import jerklib.events.IRCEvent;
@@ -24,11 +23,11 @@ import jerklib.events.JoinEvent;
 import jerklib.events.MessageEvent;
 import jerklib.events.NickListEvent;
 import jerklib.events.IRCEvent.Type;
+import jerklib.events.NoticeEvent;
 import jerklib.events.PartEvent;
 import jerklib.events.QuitEvent;
 import jerklib.listeners.IRCEventListener;
-import jerklib.tasks.TaskImpl;
-public class Tabs extends JPanel {
+public class Tabs extends JPanel implements IRCEventListener{
 	 private JTextField inputField;
 	 public TextArea text;
 	 
@@ -52,11 +51,12 @@ public class Tabs extends JPanel {
 		 if(type == false){
   		
   		   notChat = true;
-          
+  		 
      		text.setEditable(false);
      		JScrollPane scrollPane = new JScrollPane(text,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 	        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
- 
+     		scrollPane.setAutoscrolls(true);
+     	
  
      		//  split.add(inputField,JSplitPane.BOTTOM);
      		
@@ -73,7 +73,7 @@ public class Tabs extends JPanel {
     
     	notChat = false;
     	list = new JList(listModel);
-      	 text.write("Joining Channel : "+ channel);
+      	 text.write("Joining Channel : "+ channel, Color.BLUE);
       	 
       	text.setEditable(false);
       	
@@ -101,7 +101,7 @@ public class Tabs extends JPanel {
 				public void actionPerformed(ActionEvent b) {
 					// TODO Auto-generated method stub
 					inputField.setText("");
-					text.write(b.getActionCommand());
+					text.write(b.getActionCommand(),Color.BLACK );
 					
 					System.out.println(b.getActionCommand());
 					
@@ -112,7 +112,7 @@ public class Tabs extends JPanel {
 					switch(sw){
 					case "j":{
 							Client client = null;
-						client = client.getInstance();
+						client = Client.getInstance();
 					
 						client.joinChannel(message);
 						break;
@@ -125,151 +125,116 @@ public class Tabs extends JPanel {
 					chan.say(b.getActionCommand());
 				}
 			}); 
+		 s.addIRCEventListener(this);
+	 }//END CONSTRUCTORd
+
+
+
+	@Override
+	public void receiveEvent(IRCEvent e) {
+		// TODO Auto-generated method stub
+		
+		if(e.getType() == Type.JOIN){ 
+			JoinEvent joinEvent = (JoinEvent)e;
+			 Channel gc = joinEvent.getChannel();System.out.println(gc.getName());
+			 if(channel.equals( gc.getName())){
+				 text.write("<"+joinEvent.getNick() + "> has joined the "+gc.getName(),Color.BLUE );
+						listModel.addElement(joinEvent.getNick());
+		}
+			
+		}else if (e.getType() == Type.CHANNEL_MESSAGE){
+			 MessageEvent me = (MessageEvent)e;
+			 Channel gc = me.getChannel();
+			 if(channel.equals( gc.getName())){
+				 
+				 if (!me.getMessage().startsWith("/")){
+				 text.write("<"+me.getNick()+"> "+me.getMessage(),Color.BLACK );
+				 }
+			 }
 		 
-		 
-	
-		 
-		 s.onEvent(new TaskImpl("NICK_LIST_EVENT")
-			{
-				public void receiveEvent(IRCEvent e)
-				{
-						 NickListEvent ne = ( NickListEvent ) e;
-						 Channel gc = ne.getChannel();
-						 if(channel.equals( gc.getName())){
-							List<String> players = ne.getNicks();
-							for (String nick : players )listModel.addElement(nick); 
+		 if(notChat)
+			 text.write(e.getType() + " " + e.getRawEventData(), Color.BLUE);         
+              
+		}else if (e.getType() == Type.CONNECT_COMPLETE){
+		       System.out.println("CONNECT");
+		}else if (e.getType() == Type.JOIN_COMPLETE){
+			  System.out.println("join");
+	    	  JoinCompleteEvent jce = (JoinCompleteEvent)e;    
+		}else if (e.getType() == Type.SERVER_INFORMATION){
+			 if(notChat)
+				 text.write(e.getType() + " " + e.getRawEventData(), Color.BLUE);  
+		}else if (e.getType() == Type.SERVER_VERSION_EVENT){
+			 if(notChat)
+				 text.write(e.getType() + " " + e.getRawEventData(), Color.BLUE);
+		}else if (e.getType() == Type.CONNECTION_LOST){
+			 if(notChat)
+				 text.write(e.getType() + " " + e.getRawEventData(), Color.BLUE);          	
+				
+			
+		}else if (e.getType() == Type.PRIVATE_MESSAGE){
+
+			System.out.println("hei du er i tabs");
+				Client client = null;
+				client = Client.getInstance();
+           MessageEvent pm = (MessageEvent)e; //message event
+           if(!client.findNick(pm.getNick())){
+        	   client.newPrivatTab(e.getSession(),pm.getNick());
+           } 
+       
+		}else if (e.getType() == Type.PART){
+			 PartEvent partEvent = (PartEvent)e;
+             Channel gc = partEvent.getChannel();System.out.println(gc.getName());
+             if(channel.equals( gc.getName())){
+            		
+       
+					for(int i = 0; i < listModel.getSize(); i++){
+						if( listModel.get(i).toString().equals(partEvent.getWho())){
+							text.write("<"+partEvent.getWho() + "> has quit the "+gc.getName(), Color.RED);
 							
+								listModel.remove(i);}
 						}
 				}
-			},Type.NICK_LIST_EVENT);
-		 
-		 s.onEvent(new TaskImpl("QUIT")
-			{
-				public void receiveEvent(IRCEvent e)
-				{ QuitEvent quitEvent = (QuitEvent)e;
-			
+		}else if (e.getType() == Type.NICK_LIST_EVENT){
+			 NickListEvent ne = ( NickListEvent ) e;
+			 Channel gc = ne.getChannel();
+			 if(channel.equals( gc.getName())){
+				List<String> players = ne.getNicks();
+				for (String nick : players )listModel.addElement(nick); 
+				
+			}
+		}else if (e.getType() == Type.QUIT){
+			 QuitEvent quitEvent = (QuitEvent)e;
+				
 				if (listModel.getSize() > quitEvent.getChannelList().size()) {
 					for(int i = 0; i>listModel.getSize(); i++){
-						text.write(quitEvent.getNick() + "has quit the Channel");
+						text.write(quitEvent.getNick() + "has quit the Channel", Color.RED);
 						if( listModel.get(i)==quitEvent.getNick()){
 							listModel.remove(i);
 							}
 						}
 					}
-				}
-				
-			},Type.QUIT);
-		 
-		 s.onEvent(new TaskImpl("JOIN")
-			{
-				public void receiveEvent(IRCEvent e)
-				{  JoinEvent joinEvent = (JoinEvent)e;
-				
-				 Channel gc = joinEvent.getChannel();
-				 if(channel.equals( gc.getName())){
-					 text.write("<"+joinEvent.getNick() + "> has joined the "+gc.getName() );
-							listModel.addElement(joinEvent.getNick());
-					}
-				
-				}
-			},Type.JOIN);
-		 
-		 s.onEvent(new TaskImpl("ERROR")
-			{
-				public void receiveEvent(IRCEvent e)
-				{
-					
-					 ErrorEvent errorEvent = (ErrorEvent)e;
-					 text.write(e.getRawEventData());
-                      	
-						}
-				
-			},Type.ERROR);
-		 
-		 
-		 s.onEvent(new TaskImpl("PART")
-			{
-				public void receiveEvent(IRCEvent e)
-				{
-					
-					 PartEvent partEvent = (PartEvent)e;
-                     Channel gc = partEvent.getChannel();
-                     if(channel.equals( gc.getName())){
-                    		
-               
-        					for(int i = 0; i < listModel.getSize(); i++){
-        						if( listModel.get(i).toString().equals(partEvent.getWho())){
-        							text.write("<"+partEvent.getWho() + "> has quit the "+gc.getName());
-        							
-        								listModel.remove(i);}
-        						}
-						}
-                 		
-                     }
-				
-			},Type.PART);
-		 
-		 s.onEvent(new TaskImpl("CHANNEL_MESSAGE")
-			{
-				public void receiveEvent(IRCEvent e)
-				{
-					 MessageEvent me = (MessageEvent)e;
-					 Channel gc = me.getChannel();
-					 if(channel.equals( gc.getName())){
-						 
-						 if (!me.getMessage().startsWith("/")){
-						 text.write("<"+me.getNick()+"> "+me.getMessage());
-						 }
-					 }
-				 
-				 if(notChat)
-					 text.write(e.getType() + " " + e.getRawEventData());         
-		              
-                  	
-						}
-				
-			},Type.CHANNEL_MESSAGE);
-	
-		 s.onEvent(new TaskImpl("CONNECT_COMPLETE")
-			{
-				public void receiveEvent(IRCEvent e)
-				{
-					               
-		              System.out.println("CONNECT");
-                     	
-						}
-				
-			},Type.CONNECT_COMPLETE);
-		 
-		 s.onEvent(new TaskImpl("JOIN_COMPLETE")
-			{
-				public void receiveEvent(IRCEvent e)
-				{
-					
-					  System.out.println("join");
-			    	  JoinCompleteEvent jce = (JoinCompleteEvent)e;     
-			    	
-                      	
-						}
-				
-			},Type.JOIN_COMPLETE);
+		}else if (e.getType() == Type.ERROR ){
+			 ErrorEvent errorEvent = (ErrorEvent)e;
+			 text.write(e.getRawEventData(), Color.BLACK);
+			 
+		}else if (e.getType() == Type.INVITE_EVENT){
+			
+			 text.write(e.getRawEventData(), Color.GREEN);
+			 
+		}else if (e.getType() == Type.NOTICE){
+			NoticeEvent event = (NoticeEvent)e;
+			
+			 text.write(event.getNoticeMessage(), Color.RED);
+			
+		}else {
+			
+			 text.write(e.getRawEventData(), Color.RED);
+		}
+			
 		
-		
-	 }	 
-
-	public void newTab(){
 		
 	}
-	public void setText(String tx){
-		 text.write(tx);
-	}
-	public void joinChannel(String chan){
-		
 	
-		
-	}	 
-	
-
 }
 
 

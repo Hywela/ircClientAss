@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,7 +37,7 @@ import no.hig.irc_client.DeleteTabs;
 public final class Client implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    private static Vector<String> pmVec ;
     private static class clientLoader {
         private static final Client INSTANCE = new Client();
     }
@@ -57,6 +58,7 @@ public final class Client implements Serializable {
     }
     
     public void serFrame(JFrame frame){
+    	pmVec = new Vector<String>();
     	  this.frame = frame;
           this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           b.addActionListener(new java.awt.event.ActionListener() {
@@ -160,6 +162,28 @@ public void joinChannel(String chan){
 	 newTab(session, chan );
 }
   
-
+public void newPrivatTab(Session s, String nick){
+  	 PrivateMessage p = new PrivateMessage(new BorderLayout(), s, nick);
+     pane.add(nick,p);
+     initTabComponent();  
+     pmVec.add(nick);
+ pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+	
+}
+public void deleteNick(String s){
+	
+	for (int i = 0; i < pmVec.size(); i++){
+		if(pmVec.get(i).equals(s))
+			pmVec.remove(i);
+	}
+	
+}
+public boolean findNick(String s){
+	for (int i = 0; i < pmVec.size(); i++){
+		if(pmVec.get(i).equals(s))
+			return true;
+	}
+	return false;
+}
     
 }

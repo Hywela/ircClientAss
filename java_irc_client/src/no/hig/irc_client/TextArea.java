@@ -1,12 +1,21 @@
 package no.hig.irc_client;
 
+import java.awt.Color;
+
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.Scrollable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 
-public class TextArea extends JTextArea implements DocumentListener, Scrollable{
+public class TextArea extends JTextPane  implements DocumentListener, Scrollable{
 
 	 String newline = "\n";
 	public TextArea (){
@@ -20,29 +29,41 @@ public class TextArea extends JTextArea implements DocumentListener, Scrollable{
 		
 	}
 
+
+    
+    public void write(String txt, Color color){
+    	
+    try {
+   	      Document doc = getDocument();
+   	      StyleContext context = new StyleContext();
+   	   // build a style
+   	 Style style = context.addStyle("test", null);
+   	  
+   	 int size = 14;
+   	 String fam= "Verdana";
+   	 StyleConstants.setFontFamily(style, fam);
+   	 StyleConstants.setFontSize(style, size);
+   	   // set some style properties
+   	   StyleConstants.setForeground(style, color);
+   	 doc.insertString(doc.getLength(), newline, null);
+   	      doc.insertString(doc.getLength(), txt, style);
+   	   } catch(BadLocationException exc) {
+   	      exc.printStackTrace();
+   	   }
+    	 setCaretPosition(getDocument().getLength());
+   }
+
 	@Override
-	public void insertUpdate(DocumentEvent e) {
+	public void insertUpdate(DocumentEvent arg0) {
 		// TODO Auto-generated method stub
-		  updateLog(e, "inserted into");
+		
 	}
 
 	@Override
-	public void removeUpdate(DocumentEvent e) {
+	public void removeUpdate(DocumentEvent arg0) {
 		// TODO Auto-generated method stub
-		  updateLog(e, "inserted into");
+		
 	}
-    public void updateLog(DocumentEvent e, String action) {
-        Document doc = (Document)e.getDocument();
-        int changeLength = e.getLength();
-        append(
-            changeLength + " character" +
-            ((changeLength == 1) ? " " : "s ") +
-            action + doc.getProperty("name") + "."   +
-            "  Text length = " + doc.getLength() );
-    }
-    public void write(String txt){
-    	append(newline);
-    	append(txt);
-    }
-    
+  
+
 }
