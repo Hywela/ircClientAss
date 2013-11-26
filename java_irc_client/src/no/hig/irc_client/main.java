@@ -62,15 +62,21 @@ public void newChannelTab(){
 		gui.setVisible(true);
 	 }
 	
-	public AddServer openNewServerWindow(){
-		AddServer gui = new AddServer(new JFrame());
+	public void openNewServerWindow(){
+		AddServer gui = new AddServer(main.this);
 		gui.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		gui.setSize(460, 200);
+		gui.setSize(460, 225);
 		gui.setLocation(300,300);
 		gui.setVisible(true);
-		return gui;
 	 }
 	
+	public void openServerList(){
+		ServerList gui = new ServerList(main.this);
+		gui.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		gui.setSize(460, 225);
+		gui.setLocation(300,300);
+		gui.setVisible(true);
+	}
 		
 	
 	 public void fileMenu() {
@@ -94,7 +100,6 @@ public void newChannelTab(){
          JMenuItem conAction = new JMenuItem("newConnection");
          JMenuItem saveAction = new JMenuItem(Language.getMsg("save_file"));
          JMenuItem exitAction = new JMenuItem(Language.getMsg("exit"));
-         JMenuItem genAction = new JMenuItem(Language.getMsg("export"));
          JMenuItem newItemAction = new JMenuItem(Language.getMsg("add"));
          JMenuItem deleteItemAction = new JMenuItem(Language.getMsg("delete"));
 
@@ -114,8 +119,8 @@ public void newChannelTab(){
          // file menu actions
          serverListAction.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent ae) {
-                	 AddServer server = openNewServerWindow();
-                       
+                	 //openServerList();
+                	 openNewServerWindow();
                  }
          });
 
