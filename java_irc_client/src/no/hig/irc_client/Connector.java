@@ -11,11 +11,12 @@ public class Connector  {
 
 	
 	public Connector(){
-		;
+		
 		/*
 		 * ConnectionManager takes a Profile to use for new connections.
 		 */
-		manager = new ConnectionManager(new Profile("hyw")); 
+		ProfileSettings profile = new ProfileSettings();
+		manager = new ConnectionManager(profile.getProfile()); 
 		/*
 		 * One instance of ConnectionManager can connect to many IRC networks.
 		 * ConnectionManager#requestConnection(String) will return a Session object.

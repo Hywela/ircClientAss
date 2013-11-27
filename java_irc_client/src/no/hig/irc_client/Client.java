@@ -1,6 +1,7 @@
 package no.hig.irc_client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -19,6 +20,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.ListModel;
+
 import jerklib.Session;
 
 public final class Client implements Serializable {
@@ -120,15 +123,26 @@ public final class Client implements Serializable {
 	}
 
 	public void joinChannel(String chan) {
-
+		boolean join=true;
+		for (int i = 0 ; i<pane.getComponentCount()-1; i++){
+			if(pane.getTitleAt(i).equals(chan))
+				join = false;
+		}
+		
+		if(join){
 		session.join(chan);
 		newTab(session, chan);
-	}
+	
+		}
+}
 
-	public void newPrivatTab(Session s, String nick) {
+	public void newPrivatTab(Session s, String nick, String o_msg) {
 		PrivateMessage p = new PrivateMessage(new BorderLayout(), s, nick);
 		pane.add(nick, p);
-
+		if (o_msg != null){
+			
+			p.text.write(o_msg, Color.BLACK);
+		}
 		pmVec.add(nick);
 		initiCLoseTabCode(nick);
 		pane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
@@ -172,7 +186,10 @@ public final class Client implements Serializable {
 		btnClose.addMouseListener(buttonMouseListener);
 		btnClose.addActionListener(actionListerner);
 	}
-
+	public void getMessage(String nick, String msg){
+		
+		
+	}
 	private final static MouseListener buttonMouseListener = new MouseAdapter() {
 		public void mouseEntered(MouseEvent e) {
 			Component component = e.getComponent();
@@ -200,8 +217,16 @@ public final class Client implements Serializable {
 			// TODO Auto-generated method stub
 			int index = pane.getSelectedIndex();
 			if (index >= 1) {
-
-				pane.remove(index);
+				
+				if(pane.getTitleAt(index).startsWith("#")){
+					Tabs p = (Tabs) pane.getComponentAt(index);
+					p.destructor(session);
+					pane.remove(index);
+				}else{
+				deleteNick(pane.getTitleAt(index));	pane.remove(index);
+				}
+			
+				
 			}
 		}
 	};

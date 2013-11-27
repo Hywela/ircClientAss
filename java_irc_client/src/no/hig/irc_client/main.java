@@ -35,7 +35,7 @@ public void newTab(){
 	
 }
 public void newChannelTab(){
-	client.joinChannel("#test_hywel");
+	client.joinChannel("#test_hywe");
 
 }
 	

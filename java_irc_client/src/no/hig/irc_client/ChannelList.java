@@ -31,7 +31,7 @@ public class ChannelList extends JList<Object> implements ActionListener {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 
 public void setNick(String nick){
 	

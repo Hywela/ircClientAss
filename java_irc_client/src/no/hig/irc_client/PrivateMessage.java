@@ -85,7 +85,7 @@ public class PrivateMessage extends JPanel {
 				client = Client.getInstance();
 				MessageEvent pm = (MessageEvent) e; // message event
 				if (pm.getNick().equals(pmNick)) {
-					text.write(e.getType() + " " + pm.getMessage(), Color.BLACK);
+					text.write(pm.getMessage(), Color.BLACK);
 				}
 
 			}
