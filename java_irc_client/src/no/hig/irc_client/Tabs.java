@@ -196,6 +196,7 @@ public void destructor(Session s){
 
 		} else if (e.getType() == Type.CONNECT_COMPLETE) {
 			System.out.println("CONNECT");
+			client.chanelList();
 		} else if (e.getType() == Type.JOIN_COMPLETE) {
 			System.out.println("join");
 			JoinCompleteEvent jce = (JoinCompleteEvent) e;

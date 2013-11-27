@@ -4,28 +4,43 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ListModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SpringLayout.Constraints;
 
+import jerklib.Channel;
 import jerklib.Session;
+import jerklib.events.IRCEvent;
+import jerklib.events.IRCEvent.Type;
+import jerklib.tasks.TaskImpl;
 
 public final class Client implements Serializable {
-
+	
 	private static final long serialVersionUID = 1L;
 	private static Vector<String> pmVec;
 
@@ -47,7 +62,8 @@ public final class Client implements Serializable {
 	private Client readResolve() {
 		return clientLoader.INSTANCE;
 	}
-
+	
+	
 	public void serFrame(JFrame frame) {
 		pmVec = new Vector<String>();
 		this.frame = frame;
@@ -80,7 +96,8 @@ public final class Client implements Serializable {
 	private JFrame frame;
 	private final JTabbedPane pane = new JTabbedPane();
 	private final JButton b = new JButton("Connect");
-
+	DefaultListModel<String> chanModel;
+	JList<DefaultListModel<String>> chan;
 	public Client(JFrame frame) {
 
 		this.frame = frame;
@@ -106,7 +123,66 @@ public final class Client implements Serializable {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
+	
+	public void chanelList(){
+		chanModel = new DefaultListModel<String>();
 
+					chanModel.addElement("#test_hywel");	
+					chanModel.addElement("#test_hyw");
+					chanModel.addElement("#test_hywe");
+		
+			
+			chan = new JList(chanModel);
+		JFrame frame = new JFrame();
+		JTextField inputField = new JTextField(null,40);
+		JTextArea list = new JTextArea("Test");
+		JButton submit, cancle;
+		submit = new JButton("Submit");
+		cancle = new JButton("Cancle");	
+		
+		JScrollPane scrollPane = new JScrollPane(chan,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		
+		
+	JPanel panel = new JPanel();
+	JPanel panel2 = new JPanel();
+	JPanel panel3 = new JPanel();
+	
+	
+		//frame.setLayout(new BorderLayout());
+	//	panel.setLayout(new BorderLayout());
+		//panel2.setLayout(new BorderLayout());
+
+		panel.add(new JLabel("Channel : "),BorderLayout.WEST);
+		panel.add(inputField, BorderLayout.CENTER);
+
+	frame.add(panel, BorderLayout.NORTH);
+	
+panel2.add(scrollPane,BorderLayout.WEST);
+panel2.add(new JLabel("List : "), BorderLayout.CENTER);
+
+frame.add(panel2, BorderLayout.CENTER);	    
+
+
+
+
+
+panel3.add(cancle, BorderLayout.EAST);
+panel3.add(submit, BorderLayout.WEST);
+
+frame.add(panel3, BorderLayout.SOUTH);	
+
+		frame.pack();
+		frame.setAlwaysOnTop(true);
+		//frame.setSize(new Dimension(700, 300));
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+	}
+	
+	
 	public void newTab(Session sess, String channel) {
 
 		Tabs p = new Tabs(new BorderLayout(), true, sess, channel);

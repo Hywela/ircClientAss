@@ -133,7 +133,8 @@ public void newChannelTab(){
          
          conAction.addActionListener(new ActionListener(){
         	  public void actionPerformed(ActionEvent ae) {
-        		  newChannelTab();
+        		//  newChannelTab();
+        		  client.chanelList();
         	  }
         	 
         	 

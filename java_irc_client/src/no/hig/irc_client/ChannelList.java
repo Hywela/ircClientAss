@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 
 import jerklib.Channel;
 import jerklib.Session;
@@ -17,7 +18,7 @@ import jerklib.events.NickListEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.tasks.TaskImpl;
 
-public class ChannelList extends JList<Object> implements ActionListener {
+public class ChannelList extends JPanel implements ActionListener {
 
 
 	public ChannelList(){
