@@ -200,13 +200,16 @@ chanFrame.setVisible(true);
 	
 		}}
 }
-
+public sizzySettings getSettings(){
+	return settings;
+}
 	public void newPrivatTab(Session s, String nick, String o_msg) {
 		PrivateMessage p = new PrivateMessage(new BorderLayout(), s, nick);
 		pane.add(nick, p);
 		if (o_msg != null){
 			
-			p.text.write(o_msg, Color.BLACK);
+			p.text.write(o_msg, settings.getTekstColor(), settings.getSize()
+					, settings.getFont());
 		}
 		pmVec.add(nick);
 		initiCLoseTabCode(nick);
@@ -336,4 +339,5 @@ chanFrame.setVisible(true);
 			}
 		}
 	};
+
 }

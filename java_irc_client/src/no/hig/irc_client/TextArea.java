@@ -31,7 +31,7 @@ public class TextArea extends JTextPane  implements DocumentListener, Scrollable
 
 
     
-    public void write(String txt, Color color){
+    public void write(String txt, Color color, int size, String Font){
     	
     try {
    	      Document doc = getDocument();
@@ -39,9 +39,8 @@ public class TextArea extends JTextPane  implements DocumentListener, Scrollable
    	   // build a style
    	 Style style = context.addStyle("test", null);
    	  
-   	 int size = 14;
-   	 String fam= "Verdana";
-   	 StyleConstants.setFontFamily(style, fam);
+
+   	 StyleConstants.setFontFamily(style, Font);
    	 StyleConstants.setFontSize(style, size);
    	   // set some style properties
    	   StyleConstants.setForeground(style, color);
@@ -64,6 +63,36 @@ public class TextArea extends JTextPane  implements DocumentListener, Scrollable
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void writeNameAndMessage(String txt, Color nameColor,
+			String message, Color tekstColor, int size, String font) {
+		try {
+	   	      Document doc = getDocument();
+	   	      StyleContext context = new StyleContext();
+	   	   
+	   	      Style style = context.addStyle("test", null);
+		   	 StyleConstants.setFontFamily(style, font);
+		   	 StyleConstants.setFontSize(style, size);
+		   	   // set some style properties
+		   	   StyleConstants.setForeground(style, nameColor);
+	    	 doc.insertString(doc.getLength(), newline, null);
+	   	      doc.insertString(doc.getLength(), txt, style);
+	   	  style = context.addStyle("test", null);
+	   	 StyleConstants.setFontFamily(style, font);
+	   	 StyleConstants.setFontSize(style, size);
+	   	   // set some style properties
+	   	   StyleConstants.setForeground(style, tekstColor);
+	   	 
+	
+	   	      doc.insertString(doc.getLength(), message, style);
+	   	   } catch(BadLocationException exc) {
+	   	      exc.printStackTrace();
+	   	   }
+	    	 setCaretPosition(getDocument().getLength());
+	   }
+
+		
+	}
   
 
-}
+

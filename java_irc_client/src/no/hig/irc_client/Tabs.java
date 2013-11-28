@@ -107,7 +107,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 		chan = new Channel(channel, s);
 
 		list = new JList(listModel);
-		text.write("Joining Channel : " + channel, Color.BLUE);
+		text.write("Joining Channel : " + channel, Color.BLUE, client.getSettings().getSize()
+				, client.getSettings().getFont());
 
 		text.setEditable(false);
 
@@ -135,7 +136,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 			@Override
 			public void actionPerformed(ActionEvent b) {
 				inputField.setText("");
-				text.write(b.getActionCommand(), Color.BLACK);
+				text.write(b.getActionCommand(), client.getSettings().getMyColor(),
+						client.getSettings().getSize(), client.getSettings().getFont());
 				if (b.getActionCommand().startsWith("/")) {
 
 					String sw = b.getActionCommand().substring(1, 2);
@@ -231,7 +233,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 			if (channel.equals(gc.getName())) {
 				text.write(
 						"<" + joinEvent.getNick() + "> has joined the "
-								+ gc.getName(), Color.BLUE);
+								+ gc.getName(), Color.BLUE, client.getSettings().getSize()
+								,client.getSettings().getFont());
 				if (isUserOP(joinEvent.getNick())) {
 					listModel.addElement("@" + joinEvent.getNick());
 				} else if (isUserVoiced(joinEvent.getNick())) {
@@ -248,8 +251,12 @@ public class Tabs extends JPanel implements IRCEventListener {
 			if (channel.equals(gc.getName())) {
 
 				if (!me.getMessage().startsWith("/")) {
-					text.write("<" + me.getNick() + "> " + me.getMessage(),
-							Color.BLACK);
+					text.writeNameAndMessage
+					("<" + me.getNick() + "> ",client.getSettings().getNameColor(),
+							me.getMessage(),client.getSettings().getTekstColor(),
+							client.getSettings().getSize(), client.getSettings().getFont());
+					
+					
 				}
 			}
 		} else if (e.getType() == Type.JOIN_COMPLETE) {
@@ -282,7 +289,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 					if (selected.equals(partEvent.getWho())) {
 						text.write("<" + partEvent.getWho() + "> has quit the "
-								+ gc.getName(), Color.RED);
+								+ gc.getName(), Color.RED, client.getSettings().getSize()
+								, client.getSettings().getFont());
 
 						listModel.remove(i);
 					}
@@ -313,7 +321,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 			for (int i = 0; i > listModel.getSize(); i++) {
 				text.write(quitEvent.getNick() + "has quit the Channel",
-						Color.RED);
+						Color.RED, client.getSettings().getSize()
+						, client.getSettings().getFont());
 				String selected = listModel.get(i).toString();
 				if (selected.startsWith("+")) {
 					selected = selected.substring(1);
@@ -331,19 +340,22 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 		} else if (e.getType() == Type.INVITE_EVENT) {
 
-			text.write(e.getRawEventData(), Color.GREEN);
+			text.write(e.getRawEventData(), Color.GREEN, client.getSettings().getSize()
+					, client.getSettings().getFont());;
 
 		} else if (e.getType() == Type.NOTICE) {
 			NoticeEvent event = (NoticeEvent) e;
 
-			text.write(event.getNoticeMessage(), Color.RED);
+			text.write(event.getNoticeMessage(), Color.RED, client.getSettings().getSize()
+					, client.getSettings().getFont());
 		} else if (e.getType() == Type.MODE_EVENT) {
 
 			ModeEvent modeEvent = (ModeEvent) e;
 			Channel gc = modeEvent.getChannel();
 			if (channel.equals(gc.getName())) {
 				String tmp = modeEvent.getModeAdjustments().toString();
-				text.write(modeEvent.setBy() + " sets " + tmp, Color.gray);
+				text.write(modeEvent.setBy() + " sets " + tmp, Color.gray, client.getSettings().getSize()
+						, client.getSettings().getFont());
 				String mod = "";
 
 				if (tmp.charAt(1) == '+') {
@@ -504,11 +516,13 @@ public class Tabs extends JPanel implements IRCEventListener {
 										text.write(
 												we.getNick() + " : "
 														+ we.getHost(),
-												Color.BLUE);
+												Color.BLUE, client.getSettings().getSize()
+												, client.getSettings().getFont());
 										text.write(
 												"Channels in : "
 														+ we.getChannelNames(),
-												Color.BLUE);
+												Color.BLUE, client.getSettings().getSize()
+												, client.getSettings().getFont());
 									}
 								}, Type.WHOIS_EVENT);
 					}

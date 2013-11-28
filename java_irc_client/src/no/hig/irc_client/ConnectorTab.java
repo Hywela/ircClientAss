@@ -61,7 +61,8 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 			public void actionPerformed(ActionEvent b) {
 				// TODO Auto-generated method stub
 				inputField.setText("");
-				text.write(b.getActionCommand(), Color.BLACK);
+				text.write(b.getActionCommand(), Color.BLACK,
+						client.getSettings().getSize(), client.getSettings().getFont());
 				if (b.getActionCommand().startsWith("/")) {
 
 					String sw = b.getActionCommand().substring(1, 2);
@@ -98,29 +99,35 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 				client.addToChanList(event.getChannelName());
 			}
 	 if (e.getType() == Type.CONNECT_COMPLETE) {
-		text.write("Connection Complete", Color.GREEN);
+		text.write("Connection Complete", Color.GREEN,
+				client.getSettings().getSize(), client.getSettings().getFont());
 		//client.chanelList();	// if you want to start the chan list at start up
 		}
 	
 	
 		 else if (e.getType() == Type.ERROR) {
 			ErrorEvent errorEvent = (ErrorEvent) e;
-			text.write(e.getRawEventData(), Color.BLACK);
+			text.write(e.getRawEventData(), Color.BLACK,
+					client.getSettings().getSize(), client.getSettings().getFont());
 
 		
 		} else if (e.getType() == Type.SERVER_INFORMATION) {
 			ServerInformationEvent errorEvent = (ServerInformationEvent) e;
-			text.write(errorEvent.getRawEventData(), Color.BLACK);
+			text.write(errorEvent.getRawEventData(), Color.BLACK,
+					client.getSettings().getSize(), client.getSettings().getFont());
 
 		
 		} else if (e.getType() == Type.SERVER_VERSION_EVENT) {
 			ServerVersionEvent errorEvent = (ServerVersionEvent) e;
-			text.write(errorEvent.getHostName(), Color.BLACK);
-			text.write(errorEvent.getVersion(), Color.BLACK);
+			text.write(errorEvent.getHostName(), Color.BLACK,
+					client.getSettings().getSize(), client.getSettings().getFont());
+			text.write(errorEvent.getVersion(), Color.BLACK,
+					client.getSettings().getSize(), client.getSettings().getFont());
 		
 		} else if (e.getType() == Type.CONNECTION_LOST) {
 			ConnectionLostEvent errorEvent = (ConnectionLostEvent) e;
-			text.write(errorEvent.getRawEventData(), Color.BLACK);
+			text.write(errorEvent.getRawEventData(), Color.BLACK,
+					client.getSettings().getSize(), client.getSettings().getFont());
 
 		
 		}
@@ -130,11 +137,12 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 		
 				text.write("<" + kickEvent.getWho() + "> has been kicked by "
 						+ kickEvent.byWho() + " Reason(\""+kickEvent.getMessage()+"\")"
-						, Color.RED);
+						, Color.RED,client.getSettings().getSize(), client.getSettings().getFont());
 			
 				
 			
-		}else text.write(e.getRawEventData(), Color.BLACK);
+		}else text.write(e.getRawEventData(), Color.BLACK,
+				client.getSettings().getSize(), client.getSettings().getFont());
 
 	}
 

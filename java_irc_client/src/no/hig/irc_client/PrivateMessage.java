@@ -18,7 +18,7 @@ import jerklib.tasks.TaskImpl;
 public class PrivateMessage extends JPanel {
 	private JTextField inputField;
 	public TextArea text;
-
+	private Client client = Client.getInstance();
 	public String pmNick;
 
 	boolean notChat;
@@ -35,7 +35,8 @@ public class PrivateMessage extends JPanel {
 
 		notChat = false;
 
-		text.write("Joining Private message with  : " + pmNick, Color.BLUE);
+		text.write("Joining Private message with  : " + pmNick, Color.BLUE,
+				client.getSettings().getSize(),client.getSettings().getFont() );
 		text.setEditable(false);
 
 		JScrollPane scrollPane = new JScrollPane(text,
@@ -51,10 +52,9 @@ public class PrivateMessage extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent b) {
-				// TODO Auto-generated method stub
 				inputField.setText("");
-				text.write(b.getActionCommand(), Color.BLACK);
-
+				text.write(b.getActionCommand(), client.getSettings().getMyColor(),
+						client.getSettings().getSize(),client.getSettings().getFont() );
 				System.out.println(b.getActionCommand());
 
 				if (b.getActionCommand().startsWith("/")) {
@@ -85,7 +85,8 @@ public class PrivateMessage extends JPanel {
 				client = Client.getInstance();
 				MessageEvent pm = (MessageEvent) e; // message event
 				if (pm.getNick().equals(pmNick)) {
-					text.write(pm.getMessage(), Color.BLACK);
+					text.write(pm.getMessage(), client.getSettings().getTekstColor(),
+							client.getSettings().getSize(),client.getSettings().getFont() );
 				}
 
 			}
@@ -93,17 +94,4 @@ public class PrivateMessage extends JPanel {
 		}, Type.PRIVATE_MESSAGE);
 
 	}
-
-	public void newTab() {
-
-	}
-
-	public void setText(String tx) {
-
-	}
-
-	public void joinChannel(String chan) {
-
-	}
-
 }
