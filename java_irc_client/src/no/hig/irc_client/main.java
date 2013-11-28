@@ -25,11 +25,11 @@ private JFrame frame;
 		
 	}	
 public void newTab(){
-
+client.joinChannel("#test_hywel");
 	
 }
 public void newChannelTab(){
-	client.joinChannel("#test_hywel");
+	client.settings();
 }
 	 public static void main(String[] args) {
 		 
@@ -118,7 +118,7 @@ public void newChannelTab(){
          conAction.addActionListener(new ActionListener(){
         	  public void actionPerformed(ActionEvent ae) {
         		  //newChannelTab();
-				  client.chanelList();
+				  client.settings();
         	  }
         	 
         	 

@@ -64,6 +64,7 @@ public final class Client implements Serializable {
 	private Client readResolve() {
 		return clientLoader.INSTANCE;
 	}
+	private sizzySettings settings;
 	private Connector con = null;
 	private Session session = null;
 	private JFrame frame;
@@ -72,8 +73,9 @@ public final class Client implements Serializable {
 	private DefaultListModel<String> chanModel;
 	private JList<DefaultListModel<String>> chan;
 	private JTextField inputField;
-	private JFrame chanFrame;
+	private JFrame chanFrame, settingsFrame;
 	public void serFrame(JFrame frame) {
+		settings = new sizzySettings(settingsFrame= new JFrame()); 
 		pmVec = new Vector<String>();
 		this.frame = frame;
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,6 +105,10 @@ public final class Client implements Serializable {
 		frame.setVisible(true);
 
 	}
+	
+public void settings(){
+	settings.show();
+}
 public void setSession(Session session){
 	this.session =  session;
 }
