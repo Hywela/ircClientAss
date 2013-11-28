@@ -41,6 +41,12 @@ import jerklib.events.modes.ModeEvent;
 import jerklib.listeners.IRCEventListener;
 import jerklib.tasks.TaskImpl;
 
+/**
+ * Tab class for chat tabs
+ * 
+ * @author hyw
+ * 
+ */
 public class Tabs extends JPanel implements IRCEventListener {
 	/**
 	 * 
@@ -54,17 +60,30 @@ public class Tabs extends JPanel implements IRCEventListener {
 	DefaultListModel<String> listModel;
 	JList<DefaultListModel<String>> list;
 	Client client = Client.getInstance();
+	/**
+	 * Buttons on the right click in list(with users)
+	 */
 	JButton op, deop, kick, whoise, devoice, voice;
-	
-	final JFrame kickFrame = new JFrame();	
-	public Tabs(BorderLayout borderLayout, boolean type, final Session s,
-			final String channel) {
-		// TODO Auto-generated constructor stub
+	/**
+	 * Frame for the kick window
+	 */
+	final JFrame kickFrame = new JFrame();
+
+	/**
+	 * Constructor
+	 * 
+	 * @param borderLayout
+	 * @param s
+	 *            (final Session)
+	 * @param channel
+	 *            (Channel Name)
+	 */
+	public Tabs(BorderLayout borderLayout, final Session s, final String channel) {
 		super(borderLayout);
 		listModel = new DefaultListModel<String>();
 		text = new TextArea();
 		inputField = new JTextField();
-		
+
 		GridLayout grid = new GridLayout(0, 1);
 		// PopUpMenue
 		popMenue = new JPopupMenu();
@@ -83,39 +102,38 @@ public class Tabs extends JPanel implements IRCEventListener {
 		popMenue.add(devoice);
 		popMenue.add(kick);
 		popMenue.add(whoise);
+
 		this.channel = channel;
 		chan = new Channel(channel, s);
-		
 
-		if (type == true) {
-			list = new JList(listModel);
-			text.write("Joining Channel : " + channel, Color.BLUE);
+		list = new JList(listModel);
+		text.write("Joining Channel : " + channel, Color.BLUE);
 
-			text.setEditable(false);
+		text.setEditable(false);
 
-			JScrollPane scrollPane = new JScrollPane(list,
-					ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane scrollPane = new JScrollPane(list,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-			JScrollPane scrollPane2 = new JScrollPane(text,
-					ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			// /p.add(scrollPane, BorderLayout.EAST);
+		JScrollPane scrollPane2 = new JScrollPane(text,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		// /p.add(scrollPane, BorderLayout.EAST);
 
-			JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					scrollPane, scrollPane2);
-			// split.add(inputField,JSplitPane.BOTTOM);
-			// p.add(list,BorderLayout.EAST);
-			add(split);
-			// p.add(,BorderLayout.CENTER);
-			add(inputField, BorderLayout.SOUTH);
-			list.addMouseListener(buttonMouseListener);
-		}
+		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				scrollPane, scrollPane2);
+		add(split);
+		add(inputField, BorderLayout.SOUTH);
+		//Adds a MouseListerner to check stuff in the list like rigthclick ect
+		list.addMouseListener(buttonMouseListener);
+		/**
+		 * To speak in the channel / also room for a more /commands
+		 * like /j #channel - joins a channel
+		 */
 		inputField.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent b) {
-				// TODO Auto-generated method stub
 				inputField.setText("");
 				text.write(b.getActionCommand(), Color.BLACK);
 				if (b.getActionCommand().startsWith("/")) {
@@ -128,13 +146,14 @@ public class Tabs extends JPanel implements IRCEventListener {
 						client.joinChannel(message);
 						break;
 					}
-					
+
 					}
 
-				} else
+				} else	//Speak the truth !
 					chan.say(b.getActionCommand());
 			}
-		});
+		}); //End ActionListener
+		//adds listener for irc events
 		s.addIRCEventListener(this);
 	}// END CONSTRUCTORd
 
@@ -168,39 +187,39 @@ public class Tabs extends JPanel implements IRCEventListener {
 		return false;
 
 	}
-    public void sortList() {
-        Object o;
-        ArrayList al = new ArrayList();
-        for (int i=0;i<listModel.size();i++) {        //iterates through the listModel
-                o = listModel.elementAt(i);                        //picking out i'te element
-                al.add(o);                                                        //add it to the arraylist
-        }                
-        
-        
-        
-        Collections.sort(al);                                        //sort the arraylist
-        listModel.clear();                                                //clear the list
-        for (int i=0;i<al.size();i++) {                        //this is only done because + comes before @ in the ASCII table
-                o = al.get(i);                                                //getting i'te element
-                if(((String)o).charAt(0) == '@')        //if the first textelement is @ for OP
-                        listModel.addElement((String) o);                //add to the list
-        }
-        for (int i=0;i<al.size();i++) {
-            o = al.get(i);
-            if( ((String)o).charAt(0) == '+')
-                    listModel.addElement((String) o);
-        }
-        for (int i=0;i<al.size();i++) {
-                o = al.get(i);
-                if( ((String)o).charAt(0) != '@' && ((String)o).charAt(0) !='+')
-                        listModel.addElement((String) o);
-                
-                
-                
-                
-                
-        }
-}
+
+	public void sortList() {
+		Object o;
+		ArrayList al = new ArrayList();
+		for (int i = 0; i < listModel.size(); i++) { // iterates through the
+														// listModel
+			o = listModel.elementAt(i); // picking out i'te element
+			al.add(o); // add it to the arraylist
+		}
+
+		Collections.sort(al); // sort the arraylist
+		listModel.clear(); // clear the list
+		for (int i = 0; i < al.size(); i++) { // this is only done because +
+												// comes before @ in the ASCII
+												// table
+			o = al.get(i); // getting i'te element
+			if (((String) o).charAt(0) == '@') // if the first textelement is @
+												// for OP
+				listModel.addElement((String) o); // add to the list
+		}
+		for (int i = 0; i < al.size(); i++) {
+			o = al.get(i);
+			if (((String) o).charAt(0) == '+')
+				listModel.addElement((String) o);
+		}
+		for (int i = 0; i < al.size(); i++) {
+			o = al.get(i);
+			if (((String) o).charAt(0) != '@' && ((String) o).charAt(0) != '+')
+				listModel.addElement((String) o);
+
+		}
+	}
+
 	@Override
 	public void receiveEvent(IRCEvent e) {
 		// TODO Auto-generated method stub
@@ -219,7 +238,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 					listModel.addElement("+" + joinEvent.getNick());
 				} else
 					listModel.addElement("" + joinEvent.getNick());
-				
+
 				sortList();
 			}
 		} else if (e.getType() == Type.CHANNEL_MESSAGE) {
@@ -236,7 +255,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 		} else if (e.getType() == Type.JOIN_COMPLETE) {
 			System.out.println("join");
 			JoinCompleteEvent jce = (JoinCompleteEvent) e;
-		
+
 		} else if (e.getType() == Type.PRIVATE_MESSAGE) {
 
 			MessageEvent pm = (MessageEvent) e; // message event
@@ -252,14 +271,15 @@ public class Tabs extends JPanel implements IRCEventListener {
 			System.out.println(gc.getName());
 			if (channel.equals(gc.getName())) {
 				for (int i = 0; i < listModel.getSize(); i++) {
-					
+
 					String selected = listModel.get(i).toString();
 					if (selected.startsWith("+")) {
 						selected = selected.substring(1);
-					}if (selected.startsWith("@")){
-						selected= selected.substring(1);
 					}
-					
+					if (selected.startsWith("@")) {
+						selected = selected.substring(1);
+					}
+
 					if (selected.equals(partEvent.getWho())) {
 						text.write("<" + partEvent.getWho() + "> has quit the "
 								+ gc.getName(), Color.RED);
@@ -284,29 +304,28 @@ public class Tabs extends JPanel implements IRCEventListener {
 					} else
 						listModel.addElement(nick);
 				}
-			
+
 				sortList();
-			
 
 			}
 		} else if (e.getType() == Type.QUIT) {
 			QuitEvent quitEvent = (QuitEvent) e;
 
-			
-				for (int i = 0; i > listModel.getSize(); i++) {
-					text.write(quitEvent.getNick() + "has quit the Channel",
-							Color.RED);
-					String selected = listModel.get(i).toString();
-					if (selected.startsWith("+")) {
-						selected = selected.substring(1);
-					}if (selected.startsWith("@")){
-						selected= selected.substring(1);
-					}
-					
-					if (selected.equals(quitEvent.getNick())) {
-						listModel.remove(i);
-					}
-				
+			for (int i = 0; i > listModel.getSize(); i++) {
+				text.write(quitEvent.getNick() + "has quit the Channel",
+						Color.RED);
+				String selected = listModel.get(i).toString();
+				if (selected.startsWith("+")) {
+					selected = selected.substring(1);
+				}
+				if (selected.startsWith("@")) {
+					selected = selected.substring(1);
+				}
+
+				if (selected.equals(quitEvent.getNick())) {
+					listModel.remove(i);
+				}
+
 				sortList();
 			}
 
@@ -320,51 +339,49 @@ public class Tabs extends JPanel implements IRCEventListener {
 			text.write(event.getNoticeMessage(), Color.RED);
 		} else if (e.getType() == Type.MODE_EVENT) {
 
-		
-				ModeEvent modeEvent = (ModeEvent) e;
-				Channel gc = modeEvent.getChannel();
-				if (channel.equals(gc.getName())) {
-					String tmp = modeEvent.getModeAdjustments().toString();
-					text.write(modeEvent.setBy() + " sets " + tmp, Color.gray);
-					String mod = "";
-					
-					if (tmp.charAt(1) == '+') {
-						if (tmp.charAt(2) == 'o' || tmp.charAt(2) == 'O') {
-							mod = "@";
-						}
-						if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') {
-							mod = "+";
-						}
-					}
-					if (tmp.charAt(1) == '-') {
-						if (tmp.charAt(2) == 'o' || tmp.charAt(2) == 'O') {
-							mod = "";
-						}
-						if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') {
-							mod = "";
-						}
-					}
-					
-					String userName = "" + tmp.subSequence(4, tmp.length() - 1);
-					
-					for (int i = 0; i < listModel.getSize(); i++) {
-						String selected = listModel.get(i).toString();
-						if (selected.startsWith("+")) {
-							selected = selected.substring(1);
-						}if (selected.startsWith("@")){
-							selected= selected.substring(1);
-						}
-						
-						if (selected.equals(userName)) {
-							listModel.set(i, mod + userName);
-						} // casting the object
-					}
-				
-				
+			ModeEvent modeEvent = (ModeEvent) e;
+			Channel gc = modeEvent.getChannel();
+			if (channel.equals(gc.getName())) {
+				String tmp = modeEvent.getModeAdjustments().toString();
+				text.write(modeEvent.setBy() + " sets " + tmp, Color.gray);
+				String mod = "";
 
-			}sortList();
+				if (tmp.charAt(1) == '+') {
+					if (tmp.charAt(2) == 'o' || tmp.charAt(2) == 'O') {
+						mod = "@";
+					}
+					if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') {
+						mod = "+";
+					}
+				}
+				if (tmp.charAt(1) == '-') {
+					if (tmp.charAt(2) == 'o' || tmp.charAt(2) == 'O') {
+						mod = "";
+					}
+					if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') {
+						mod = "";
+					}
+				}
+
+				String userName = "" + tmp.subSequence(4, tmp.length() - 1);
+
+				for (int i = 0; i < listModel.getSize(); i++) {
+					String selected = listModel.get(i).toString();
+					if (selected.startsWith("+")) {
+						selected = selected.substring(1);
+					}
+					if (selected.startsWith("@")) {
+						selected = selected.substring(1);
+					}
+
+					if (selected.equals(userName)) {
+						listModel.set(i, mod + userName);
+					} // casting the object
+				}
+
+			}
+			sortList();
 		}
-	
 
 	}
 
@@ -375,43 +392,40 @@ public class Tabs extends JPanel implements IRCEventListener {
 					int selectedItem = list.getSelectedIndex();
 					String selected = listModel.get(selectedItem);
 					if (selected.charAt(1) == '+') {
-						selected =	selected.substring(1);
-					}else if (selected.charAt(1) == '@'){
+						selected = selected.substring(1);
+					} else if (selected.charAt(1) == '@') {
 						selected = selected.substring(1);
 					}
-					
+
 					client.newPrivatTab(client.getSession(), selected, null);
-				}//End MouseEvent = DoubleClick
-			}//End MouseEvent = leftClick
+				}// End MouseEvent = DoubleClick
+			}// End MouseEvent = leftClick
 			if (e.getButton() == MouseEvent.BUTTON3) {
-			int selectedItem = list.getSelectedIndex();
-						String selc = listModel.get(selectedItem);
-					
-						if (selc.startsWith("+")) {
-							selc =	selc.substring(1);
-						}else if (selc.startsWith("@")){
-							selc = selc.substring(1);
-						}
-						final String selected = selc; 
+				int selectedItem = list.getSelectedIndex();
+				String selc = listModel.get(selectedItem);
+
+				if (selc.startsWith("+")) {
+					selc = selc.substring(1);
+				} else if (selc.startsWith("@")) {
+					selc = selc.substring(1);
+				}
+				final String selected = selc;
 				popMenue.show(e.getComponent(), e.getX(), e.getY());
 
 				deop.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						
-						
-					
+
 						chan.deop(selected);
 					}
 				});
 
 				kick.addActionListener(new ActionListener() {
-					
+
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						
-										
+
 						JButton cancle = new JButton("Cancle");
 						JButton kickButton = new JButton("Kick");
 						final JTextField field = new JTextField(20);
@@ -420,87 +434,89 @@ public class Tabs extends JPanel implements IRCEventListener {
 						pan.add(field);
 						kickFrame.add(pan, BorderLayout.NORTH);
 						JPanel panel = new JPanel();
-							panel.add(cancle);
-							panel.add(kickButton);
-							kickFrame.add(panel, BorderLayout.SOUTH);
-							kickFrame.pack();
-							kickFrame.setAlwaysOnTop(true);
-							kickFrame.setVisible(true);
-						kickButton.addActionListener(new ActionListener() {					
+						panel.add(cancle);
+						panel.add(kickButton);
+						kickFrame.add(panel, BorderLayout.SOUTH);
+						kickFrame.pack();
+						kickFrame.setAlwaysOnTop(true);
+						kickFrame.setVisible(true);
+						kickButton.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								kickFrame.setVisible(false);
-								int selectedItem = list.getSelectedIndex();	
-					
+								int selectedItem = list.getSelectedIndex();
+
 								for (int i = 0; i > listModel.getSize(); i++) {
-					
-								listModel.remove(selectedItem);
-					
+
+									listModel.remove(selectedItem);
+
 								}
-						chan.kick(selected, field.getText());
+								chan.kick(selected, field.getText());
 							}
-						
+
 						});
-						cancle.addActionListener(new ActionListener() {						
+						cancle.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
-								kickFrame.setVisible(false);								
+								kickFrame.setVisible(false);
 							}
 						});
-						
+
 					}
 				});
-					
-					voice.addActionListener(new ActionListener() {						
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							int selectedItem = list.getSelectedIndex();
-							
-							chan.voice(selected);	
-						}
-					});
-					devoice.addActionListener(new ActionListener() {						
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							int selectedItem = list.getSelectedIndex();
-							final String selected = listModel.get(selectedItem).substring(1);
-							chan.deVoice(selected);					
-						}
-					});
+
+				voice.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						int selectedItem = list.getSelectedIndex();
+
+						chan.voice(selected);
+					}
+				});
+				devoice.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						int selectedItem = list.getSelectedIndex();
+						final String selected = listModel.get(selectedItem)
+								.substring(1);
+						chan.deVoice(selected);
+					}
+				});
 				op.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						int selectedItem = list.getSelectedIndex();
-						final String selected = listModel.get(selectedItem).substring(1);
+						final String selected = listModel.get(selectedItem)
+								.substring(1);
 						chan.op(selected);
 					}
 				});
-				
+
 				whoise.addActionListener(new ActionListener() {
 					@Override
-					public void actionPerformed(ActionEvent e) {			
+					public void actionPerformed(ActionEvent e) {
 						client.getSession().whois(selected);
-						client.getSession().onEvent(new TaskImpl("WHOIS_EVENT") {
-							public void receiveEvent(IRCEvent e) {
-								WhoisEvent we = (WhoisEvent) e;
-								
-								text.write(we.getNick() + " : " + we.getHost(),
-										Color.BLUE);
-								text.write(
-										"Channels in : " + we.getChannelNames(),
-										Color.BLUE);
-							}
-						}, Type.WHOIS_EVENT);
+						client.getSession().onEvent(
+								new TaskImpl("WHOIS_EVENT") {
+									public void receiveEvent(IRCEvent e) {
+										WhoisEvent we = (WhoisEvent) e;
+
+										text.write(
+												we.getNick() + " : "
+														+ we.getHost(),
+												Color.BLUE);
+										text.write(
+												"Channels in : "
+														+ we.getChannelNames(),
+												Color.BLUE);
+									}
+								}, Type.WHOIS_EVENT);
 					}
 				});
-			
 
-		
+			}// End MouseEvent = RigthClick
 
-	}//End MouseEvent = RigthClick
+		}// End MousePressed
+	};// End MouseListener
 
-	
-	}// End MousePressed
-};// End MouseListener
-		
-}//end Class	
+}// end Class

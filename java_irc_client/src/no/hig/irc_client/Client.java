@@ -166,7 +166,7 @@ chanFrame.setVisible(true);
 	
 	public void newTab(Session sess, String channel) {
 		if(pane.getTabCount() > 0){
-		Tabs p = new Tabs(new BorderLayout(), true, sess, channel);
+		Tabs p = new Tabs(new BorderLayout(), sess, channel);
 		pane.add(channel, p);
 		initiCLoseTabCode(channel);
 		}
