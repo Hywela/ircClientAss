@@ -56,9 +56,9 @@ public class Tabs extends JPanel implements IRCEventListener {
 	DefaultListModel<String> listModel;
 	JList<DefaultListModel<String>> list;
 	Client client = Client.getInstance();
-	JButton op, deop, kick, whoise;
-	boolean notChat;
-
+	JButton op, deop, kick, whoise, devoice, voice;
+	
+	final JFrame kickFrame = new JFrame();	
 	public Tabs(BorderLayout borderLayout, boolean type, final Session s,
 			final String channel) {
 		// TODO Auto-generated constructor stub
@@ -66,48 +66,30 @@ public class Tabs extends JPanel implements IRCEventListener {
 		listModel = new DefaultListModel<String>();
 		text = new TextArea();
 		inputField = new JTextField();
-
+		
 		GridLayout grid = new GridLayout(0, 1);
 		// PopUpMenue
 		popMenue = new JPopupMenu();
 
 		popMenue.setLayout(grid);
 		op = new JButton("Op");
-
 		deop = new JButton("Deop");
-
+		voice = new JButton("Voice");
+		devoice = new JButton("Devoice");
 		kick = new JButton("Kick");
-
 		whoise = new JButton("Whoise");
 
 		popMenue.add(op);
 		popMenue.add(deop);
+		popMenue.add(voice);
+		popMenue.add(devoice);
 		popMenue.add(kick);
 		popMenue.add(whoise);
 		this.channel = channel;
 		chan = new Channel(channel, s);
-		if (type == false) {
-
-			notChat = true;
-
-			text.setEditable(false);
-			JScrollPane scrollPane = new JScrollPane(text,
-					ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-					ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scrollPane.setAutoscrolls(true);
-
-			// split.add(inputField,JSplitPane.BOTTOM);
-
-			add(scrollPane, BorderLayout.CENTER);
-
-			// p.add(,BorderLayout.CENTER);
-			add(inputField, BorderLayout.SOUTH);
-
-		}
+		
 
 		if (type == true) {
-
-			notChat = false;
 			list = new JList(listModel);
 			text.write("Joining Channel : " + channel, Color.BLUE);
 
@@ -138,9 +120,6 @@ public class Tabs extends JPanel implements IRCEventListener {
 				// TODO Auto-generated method stub
 				inputField.setText("");
 				text.write(b.getActionCommand(), Color.BLACK);
-
-				System.out.println(b.getActionCommand());
-
 				if (b.getActionCommand().startsWith("/")) {
 
 					String sw = b.getActionCommand().substring(1, 2);
@@ -195,21 +174,11 @@ public class Tabs extends JPanel implements IRCEventListener {
 	@Override
 	public void receiveEvent(IRCEvent e) {
 		// TODO Auto-generated method stub
-		client.session = e.getSession();
-
-		if (notChat) {
-			if (e.getType() == Type.CHANNEL_LIST_EVENT) {
-
-				ChannelListEvent event = (ChannelListEvent) e;
-				client.addToChanList(event.getChannelName());
-				text.write(event.getChannelName(), Color.GREEN);
-			}
-		}
+		client.setSession(e.getSession());
 
 		if (e.getType() == Type.JOIN) {
 			JoinEvent joinEvent = (JoinEvent) e;
 			Channel gc = joinEvent.getChannel();
-			System.out.println(gc.getName());
 			if (channel.equals(gc.getName())) {
 				text.write(
 						"<" + joinEvent.getNick() + "> has joined the "
@@ -234,25 +203,13 @@ public class Tabs extends JPanel implements IRCEventListener {
 				}
 			}
 
-			if (notChat)
 				text.write(e.getType() + " " + e.getRawEventData(), Color.BLUE);
 
-		} else if (e.getType() == Type.CONNECT_COMPLETE) {
-			System.out.println("CONNECT");
-			client.chanelList();
+		
 		} else if (e.getType() == Type.JOIN_COMPLETE) {
 			System.out.println("join");
 			JoinCompleteEvent jce = (JoinCompleteEvent) e;
-		} else if (e.getType() == Type.SERVER_INFORMATION) {
-			if (notChat)
-				text.write(e.getType() + " " + e.getRawEventData(), Color.BLUE);
-		} else if (e.getType() == Type.SERVER_VERSION_EVENT) {
-			if (notChat)
-				text.write(e.getType() + " " + e.getRawEventData(), Color.BLUE);
-		} else if (e.getType() == Type.CONNECTION_LOST) {
-			if (notChat)
-				text.write(e.getType() + " " + e.getRawEventData(), Color.BLUE);
-
+		
 		} else if (e.getType() == Type.PRIVATE_MESSAGE) {
 
 			MessageEvent pm = (MessageEvent) e; // message event
@@ -306,9 +263,6 @@ public class Tabs extends JPanel implements IRCEventListener {
 					}
 				}
 			}
-		} else if (e.getType() == Type.ERROR) {
-			ErrorEvent errorEvent = (ErrorEvent) e;
-			text.write(e.getRawEventData(), Color.BLACK);
 
 		} else if (e.getType() == Type.INVITE_EVENT) {
 
@@ -320,63 +274,53 @@ public class Tabs extends JPanel implements IRCEventListener {
 			text.write(event.getNoticeMessage(), Color.RED);
 		} else if (e.getType() == Type.MODE_EVENT) {
 
-			if (!notChat) {
+		
 				ModeEvent modeEvent = (ModeEvent) e;
 				Channel gc = modeEvent.getChannel();
 				if (channel.equals(gc.getName())) {
 					String tmp = modeEvent.getModeAdjustments().toString();
-					text.write(modeEvent.setBy() + " " + tmp, Color.gray);
+					text.write(modeEvent.setBy() + " sets " + tmp, Color.gray);
 					String mod = null;
+					
 					if (tmp.charAt(1) == '+') {
 						if (tmp.charAt(2) == 'o' || tmp.charAt(2) == 'O') {
-
 							mod = "@";
-
 						}
-						if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') { // is
-																			// the
-																			// user
-																			// Voiced?
-							mod = "v";
+						if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') {
+							mod = "+";
 						}
 					}
 					if (tmp.charAt(1) == '-') {
 						if (tmp.charAt(2) == 'o' || tmp.charAt(2) == 'O') {
-
-							mod = "";
-
+							mod = " ";
 						}
-						if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') { // is
-																			// the
-																			// user
-																			// Voiced?
-							mod = "";
+						if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') {
+							mod = " ";
 						}
 					}
 
 					String userName = "" + tmp.subSequence(4, tmp.length() - 1);
-					text.write(listModel.get(1).substring(1), Color.gray);
 					for (int i = 0; i < listModel.getSize(); i++) {
 
 						if (listModel.get(i).substring(1).equals(userName)) {
-
-							text.write(userName, Color.gray);
 							listModel.set(i, mod + userName);
 						} // casting the object
 					}
 
-				}
+				
 
 			}
-		} else if (e.getType() == Type.MOTD) {
+	
 		} else if (e.getType() == Type.KICK_EVENT) {
 			KickEvent kickEvent = (KickEvent) e;
 			Channel gc = kickEvent.getChannel();
-			System.out.println(gc.getName());
+	
+			text.write("<" + kickEvent.getWho() + "> has been kicked by "
+					+ kickEvent.getUserName(), Color.RED);
 			if (channel.equals(gc.getName())) {
+				
 				for (int i = 0; i < listModel.getSize(); i++) {
-					if (listModel.get(i).toString().substring(1)
-							.equals(kickEvent.getWho())) {
+					if (listModel.get(i).substring(1).equals(kickEvent.getWho())) {
 						text.write("<" + kickEvent.getWho() + "> has quit the "
 								+ gc.getName(), Color.RED);
 
@@ -385,10 +329,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 				}
 			}
 
-		} else {
-			if (notChat)
-				text.write(e.getRawEventData(), Color.RED);
-		}
+		} 
 
 	}
 
@@ -397,24 +338,24 @@ public class Tabs extends JPanel implements IRCEventListener {
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				if (e.getClickCount() == 2) {
 					int selectedItem = list.getSelectedIndex();
-					String selected = listModel.get(selectedItem);
-
-					client.newPrivatTab(client.session, selected.substring(1), null);
-				}
-			}
+					String selected = listModel.get(selectedItem).substring(1);
+					
+					client.newPrivatTab(client.getSession(), selected, null);
+				}//End MouseEvent = DoubleClick
+			}//End MouseEvent = leftClick
 			if (e.getButton() == MouseEvent.BUTTON3) {
-
-				int selectedItem = list.getSelectedIndex();
-				final String selected = listModel.get(selectedItem);
-				
+			
+			
 				popMenue.show(e.getComponent(), e.getX(), e.getY());
 
 				deop.addActionListener(new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						chan.deop(selected.substring(1));
-
+						int selectedItem = list.getSelectedIndex();
+						final String selected = listModel.get(selectedItem).substring(1);
+						text.write(selectedItem+"", Color.BLUE);
+						chan.deop(selected);
 					}
 				});
 
@@ -422,8 +363,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 					
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						final JFrame kickFrame = new JFrame();
-						
+						int selectedItem = list.getSelectedIndex();
+						final String selected = listModel.get(selectedItem).substring(1);				
 						JButton cancle = new JButton("Cancle");
 						JButton kickButton = new JButton("Kick");
 						final JTextField field = new JTextField(20);
@@ -438,59 +379,75 @@ public class Tabs extends JPanel implements IRCEventListener {
 							kickFrame.pack();
 							kickFrame.setAlwaysOnTop(true);
 							kickFrame.setVisible(true);
-						kickButton.addActionListener(new ActionListener() {
-							
+						kickButton.addActionListener(new ActionListener() {					
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								kickFrame.setVisible(false);
-									chan.kick(selected.substring(1), field.getText());
+									chan.kick(selected, field.getText());
 							}
 						});
-						cancle.addActionListener(new ActionListener() {
-							
+						cancle.addActionListener(new ActionListener() {						
 							@Override
 							public void actionPerformed(ActionEvent e) {
-								kickFrame.setVisible(false);
-								
+								kickFrame.setVisible(false);								
 							}
 						});
+						
+					}
+				});
 					
-
-					}
-				});
+					voice.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							int selectedItem = list.getSelectedIndex();
+							final String selected = listModel.get(selectedItem).substring(1);
+							chan.voice(selected);	
+						}
+					});
+					devoice.addActionListener(new ActionListener() {						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							int selectedItem = list.getSelectedIndex();
+							final String selected = listModel.get(selectedItem).substring(1);
+							chan.deVoice(selected);					
+						}
+					});
 				op.addActionListener(new ActionListener() {
-
 					@Override
-					public void actionPerformed(ActionEvent arg0) {
+					public void actionPerformed(ActionEvent e) {
+						int selectedItem = list.getSelectedIndex();
+						final String selected = listModel.get(selectedItem).substring(1);
 						chan.op(selected);
-
 					}
 				});
+				
 				whoise.addActionListener(new ActionListener() {
-
 					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						client.session.whois(selected);
-
-						client.session.onEvent(new TaskImpl("WHOIS_EVENT") {
+					public void actionPerformed(ActionEvent e) {
+						int selectedItem = list.getSelectedIndex();
+						final String selected = listModel.get(selectedItem).substring(1);
+						client.getSession().whois(selected);
+						client.getSession().onEvent(new TaskImpl("WHOIS_EVENT") {
 							public void receiveEvent(IRCEvent e) {
 								WhoisEvent we = (WhoisEvent) e;
+								
 								text.write(we.getNick() + " : " + we.getHost(),
 										Color.BLUE);
 								text.write(
 										"Channels in : " + we.getChannelNames(),
 										Color.BLUE);
 							}
-
 						}, Type.WHOIS_EVENT);
-
 					}
 				});
+			
 
-			}
+		
 
-		}
+	}//End MouseEvent = RigthClick
 
-	};
-
-}
+	
+	}// End MousePressed
+};// End MouseListener
+		
+}//end Class	

@@ -64,71 +64,51 @@ public final class Client implements Serializable {
 	private Client readResolve() {
 		return clientLoader.INSTANCE;
 	}
-	
-	
+	private Connector con = null;
+	private Session session = null;
+	private JFrame frame;
+	private final JTabbedPane pane = new JTabbedPane();
+	private final JButton connect = new JButton("Connect");
+	private DefaultListModel<String> chanModel;
+	private JList<DefaultListModel<String>> chan;
+	private JTextField inputField;
+	private JFrame chanFrame;
 	public void serFrame(JFrame frame) {
 		pmVec = new Vector<String>();
 		this.frame = frame;
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		b.addActionListener(new java.awt.event.ActionListener() {
+		
+			connect.addActionListener(new java.awt.event.ActionListener() {
 
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-				if (con == null) {
-					con = new Connector();
-					session = con.getSession();
-					connectTab();
-				} else {
-					session.close("close");
+					if (con == null) {
+						con = new Connector();
+						session = con.getSession();
+						connect.setText("Disconnect");
+						connectTab();
+					} else {
+						session.close("close");
+						con = null;
+						connect.setText("Connect");
+					}
+
 				}
+			});
 
-			}
-		});
-
-		this.frame.add(b, BorderLayout.NORTH);
+		this.frame.add(connect, BorderLayout.NORTH);
 		this.frame.add(pane);
 		frame.setSize(new Dimension(700, 300));
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 
 	}
-
-	Connector con = null;
-	Session session = null;
-	private JFrame frame;
-	private final JTabbedPane pane = new JTabbedPane();
-	private final JButton b = new JButton("Connect");
-	DefaultListModel<String> chanModel;
-	JList<DefaultListModel<String>> chan;
-	JTextField inputField;
-
-	JFrame chanFrame;
-	public Client(JFrame frame) {
-
-		this.frame = frame;
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		b.addActionListener(new java.awt.event.ActionListener() {
-
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-
-				if (con == null) {
-					con = new Connector();
-					session = con.getSession();
-					connectTab();
-				} else {
-					session.close("close");
-				}
-
-			}
-		});
-
-		this.frame.add(b, BorderLayout.NORTH);
-		this.frame.add(pane);
-		frame.setSize(new Dimension(700, 300));
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-	}
-	
+public void setSession(Session session){
+	this.session =  session;
+}
+public Session getSession(){
+	return session;
+}
 	public void chanelList(){
 		chanModel = new DefaultListModel<String>();
 
@@ -162,12 +142,7 @@ public final class Client implements Serializable {
 panel2.add(scrollPane,BorderLayout.WEST);
 panel2.add(new JLabel("List : "), BorderLayout.CENTER);
 
-
 chanFrame.add(panel2, BorderLayout.CENTER);	    
-
-
-
-
 
 panel3.add(cancle, BorderLayout.EAST);
 panel3.add(submit, BorderLayout.WEST);
@@ -190,22 +165,24 @@ chanFrame.setVisible(true);
 	}
 	
 	public void newTab(Session sess, String channel) {
-
+		if(pane.getTabCount() > 0){
 		Tabs p = new Tabs(new BorderLayout(), true, sess, channel);
 		pane.add(channel, p);
 		initiCLoseTabCode(channel);
+		}
 
 	}
 
 	private void connectTab() {
-
-		Tabs p = new Tabs(new BorderLayout(), false, session, "");
+		if(pane.getTabCount() < 1){
+		ConnectorTab p = new ConnectorTab(new BorderLayout(),session);
 		pane.addTab("connector", p);
-		initiCLoseTabCode("connector");
+		initiCLoseTabCode("connector");}
 	}
 
 	public void joinChannel(String chan) {
 		boolean join=true;
+		if(pane.getTabCount() > 0){
 		for (int i = 0 ; i<pane.getComponentCount()-1; i++){
 			if(pane.getTitleAt(i).equals(chan))
 				join = false;
@@ -215,7 +192,7 @@ chanFrame.setVisible(true);
 		session.join(chan);
 		newTab(session, chan);
 	
-		}
+		}}
 }
 
 	public void newPrivatTab(Session s, String nick, String o_msg) {
