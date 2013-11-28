@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 
 public class ProfileSettings extends JDialog {
 	
-	Profile profile;
+	jerklib.Profile profile;
 	JLabel usernameLabel;
 	JLabel realNameLabel;
 	JLabel primaryNickLabel;
@@ -35,7 +35,9 @@ public class ProfileSettings extends JDialog {
 
 		addLayout(frame);
 	}
-	
+	public ProfileSettings(){
+		profile = new jerklib.Profile("Hywel","Hywela", "HYW", "HYW3");
+	}
 	
 	//edit profile constructor
 	public ProfileSettings(JFrame frame, Profile prof){
@@ -142,11 +144,11 @@ public class ProfileSettings extends JDialog {
 	//Overwrites the profile with a new one
 	private void submit(JFrame frame){
 		frame.setVisible(false);
-		profile = new Profile(username.getText(), realName.getText(), primaryNick.getText(), altNick1.getText(), altNick2.getText());
+		profile = new jerklib.Profile(username.getText(), realName.getText(), primaryNick.getText(), altNick1.getText());
 	}
 	
 	//returns current profile
-	public Profile getProfile(){
+	public jerklib.Profile getProfile(){
 		return profile;
 	}
 	
