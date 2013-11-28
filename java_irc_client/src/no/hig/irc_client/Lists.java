@@ -1,3 +1,5 @@
+//NO LONGER IN USE
+
 package no.hig.irc_client;
 
 import java.awt.Color;

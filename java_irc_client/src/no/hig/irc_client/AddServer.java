@@ -1,3 +1,5 @@
+//NO LONGER IN USE
+
 package no.hig.irc_client;
 
 import java.awt.GridBagConstraints;
@@ -106,6 +108,7 @@ public class AddServer extends JDialog {
 		
 		GridBagConstraints c = new GridBagConstraints();
 		//Labels
+		c.insets = new Insets(1,5,0,5);
 		c.anchor = GridBagConstraints.EAST;
 		c.gridx = 0;
 		c.gridy = 0;
@@ -156,7 +159,7 @@ public class AddServer extends JDialog {
 	//Overwrites the profile with a new one
 	private void submit(JFrame frame){
 		frame.setVisible(false);
-		server = new Server(urlField.getText(), nameField.getName(), Integer.parseInt(portField.getText()),
+		server = new Server(urlField.getText(), nameField.getText(), Integer.parseInt(portField.getText()),
 				continentField.getText(), stateField.getText() ,networkField.getText());
 		ServerList list = new ServerList();
 		list.add(server);

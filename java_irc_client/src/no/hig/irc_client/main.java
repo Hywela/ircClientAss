@@ -35,7 +35,7 @@ public void newTab(){
 	
 }
 public void newChannelTab(){
-	client.joinChannel("#test_hywe");
+	client.joinChannel("#test_hywel");
 
 }
 	
@@ -62,20 +62,24 @@ public void newChannelTab(){
 		gui.setVisible(true);
 	 }
 	
-	public void openNewServerWindow(){
-		AddServer gui = new AddServer(main.this);
-		gui.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		gui.setSize(460, 225);
-		gui.setLocation(300,300);
-		gui.setVisible(true);
-	 }
-	
 	public void openServerList(){
-		ServerList gui = new ServerList(main.this);
+		
+		ServerListLayout gui = new ServerListLayout(main.this);
 		gui.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		gui.setSize(460, 225);
 		gui.setLocation(300,300);
 		gui.setVisible(true);
+		
+		/**JFrame frame = new JFrame("Server List");
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        //Create and set up the content pane.
+        ServerListLayout gui = new ServerListLayout();
+        //gui.setOpaque(true); //content panes must be opaque
+        frame.setContentPane(gui);
+        frame.setLocation(300, 300);
+        frame.pack();
+        frame.setVisible(true);
+        **/
 	}
 		
 	
@@ -119,29 +123,32 @@ public void newChannelTab(){
          // file menu actions
          serverListAction.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent ae) {
-                	 //openServerList();
-                	 openNewServerWindow();
+                	 openServerList();
+                	 //openNewServerWindow();
                  }
          });
 
          channelListAction.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
-            	
-                   
+            	 
              }
      });
          
          conAction.addActionListener(new ActionListener(){
         	  public void actionPerformed(ActionEvent ae) {
-        		//  newChannelTab();
-        		  client.chanelList();
+        		  //newChannelTab();
+				  client.chanelList();
         	  }
         	 
         	 
      });
 
-         saveAction.addActionListener(new Save());
-
+         saveAction.addActionListener(new ActionListener(){
+       	  public void actionPerformed(ActionEvent ae) {
+    		  
+    	  }
+      });
+       	  
          exitAction.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent ae) {
                          System.exit(0);
