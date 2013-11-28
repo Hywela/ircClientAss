@@ -77,19 +77,19 @@ public final class Client implements Serializable {
 		pmVec = new Vector<String>();
 		this.frame = frame;
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+			con = new Connector();
 			connect.addActionListener(new java.awt.event.ActionListener() {
 
 				public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-					if (con == null) {
-						con = new Connector();
+					if (connect.getText().equals("Connect")) {
+						con.newConnection();
 						session = con.getSession();
 						connect.setText("Disconnect");
 						connectTab();
 					} else {
 						session.close("close");
-						con = null;
+						con.quit();
 						connect.setText("Connect");
 					}
 

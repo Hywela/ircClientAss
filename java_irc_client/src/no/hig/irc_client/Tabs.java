@@ -10,6 +10,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -130,7 +133,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 						client.joinChannel(message);
 						break;
 					}
-
+					
 					}
 
 				} else
@@ -170,7 +173,26 @@ public class Tabs extends JPanel implements IRCEventListener {
 		return false;
 
 	}
-
+    public void sortList() {
+        Object o;
+        ArrayList al = new ArrayList();
+        for (int i=0;i<listModel.size();i++) {        //iterates through the listModel
+                o = listModel.elementAt(i);                        //picking out i'te element
+                al.add(o);                                                        //add it to the arraylist
+        }                
+        Collections.sort(al);                                        //sort the arraylist
+        listModel.clear();                                                //clear the list
+        for (int i=0;i<al.size();i++) {                        //this is only done because + comes before @ in the ASCII table
+                o = al.get(i);                                                //getting i'te element
+                if(((String)o).charAt(0) == '@')        //if the first textelement is @ for OP
+                        listModel.addElement((String) o);                //add to the list
+        }
+        for (int i=0;i<al.size();i++) {
+                o = al.get(i);
+                if(((String)o).charAt(0) != '@')
+                        listModel.addElement((String) o);
+        }
+}
 	@Override
 	public void receiveEvent(IRCEvent e) {
 		// TODO Auto-generated method stub
@@ -189,7 +211,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 					listModel.addElement("+" + joinEvent.getNick());
 				} else
 					listModel.addElement(" " + joinEvent.getNick());
-
+				
+				sortList();
 			}
 		} else if (e.getType() == Type.CHANNEL_MESSAGE) {
 
@@ -233,6 +256,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 						listModel.remove(i);
 					}
 				}
+				sortList();
 			}
 		} else if (e.getType() == Type.NICK_LIST_EVENT) {
 			NickListEvent ne = (NickListEvent) e;
@@ -249,6 +273,9 @@ public class Tabs extends JPanel implements IRCEventListener {
 					} else
 						listModel.addElement(" " + nick);
 				}
+			
+				sortList();
+			
 
 			}
 		} else if (e.getType() == Type.QUIT) {
@@ -258,10 +285,11 @@ public class Tabs extends JPanel implements IRCEventListener {
 				for (int i = 0; i > listModel.getSize(); i++) {
 					text.write(quitEvent.getNick() + "has quit the Channel",
 							Color.RED);
-					if (listModel.get(i).substring(1) == quitEvent.getNick()) {
+					if (listModel.get(i).substring(1).equals(quitEvent.getNick())) {
 						listModel.remove(i);
 					}
 				}
+				sortList();
 			}
 
 		} else if (e.getType() == Type.INVITE_EVENT) {
@@ -306,30 +334,12 @@ public class Tabs extends JPanel implements IRCEventListener {
 							listModel.set(i, mod + userName);
 						} // casting the object
 					}
-
+				
 				
 
-			}
+			}sortList();
+		}
 	
-		} else if (e.getType() == Type.KICK_EVENT) {
-			KickEvent kickEvent = (KickEvent) e;
-			Channel gc = kickEvent.getChannel();
-	
-			text.write("<" + kickEvent.getWho() + "> has been kicked by "
-					+ kickEvent.getUserName(), Color.RED);
-			if (channel.equals(gc.getName())) {
-				
-				for (int i = 0; i < listModel.getSize(); i++) {
-					if (listModel.get(i).substring(1).equals(kickEvent.getWho())) {
-						text.write("<" + kickEvent.getWho() + "> has quit the "
-								+ gc.getName(), Color.RED);
-
-						listModel.remove(i);
-					}
-				}
-			}
-
-		} 
 
 	}
 
@@ -363,7 +373,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 					
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						int selectedItem = list.getSelectedIndex();
+						final int selectedItem = list.getSelectedIndex();
 						final String selected = listModel.get(selectedItem).substring(1);				
 						JButton cancle = new JButton("Cancle");
 						JButton kickButton = new JButton("Kick");
@@ -383,8 +393,16 @@ public class Tabs extends JPanel implements IRCEventListener {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								kickFrame.setVisible(false);
-									chan.kick(selected, field.getText());
+									
+					
+					for (int i = 0; i > listModel.getSize(); i++) {
+					
+								listModel.remove(selectedItem);
+					
+					}
+						chan.kick(selected, field.getText());
 							}
+						
 						});
 						cancle.addActionListener(new ActionListener() {						
 							@Override

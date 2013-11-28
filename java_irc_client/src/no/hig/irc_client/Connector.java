@@ -16,14 +16,15 @@ public class Connector  {
 		 * ConnectionManager takes a Profile to use for new connections.
 		 */
 		ProfileSettings profile = new ProfileSettings();
-		manager = new ConnectionManager(profile.getProfile()); 
+	
 		/*
 		 * One instance of ConnectionManager can connect to many IRC networks.
 		 * ConnectionManager#requestConnection(String) will return a Session object.
 		 * The Session is the main way users will interact with this library and IRC
 		 * networks
 		 */
-		session = manager.requestConnection("irc.worldirc.org");
+		
+	
  
 		/*
 		 * JerkLib fires IRCEvents to notify users of the lib of incoming events
@@ -32,8 +33,14 @@ public class Connector  {
 	
 		
 	}
-
-
+public void newConnection(){
+	ProfileSettings profile = new ProfileSettings();
+	manager = new ConnectionManager(profile.getProfile()); 
+	session = manager.requestConnection("uk.quakenet.org");
+}
+	public void quit(){
+		manager.quit();
+	}
 	 public Session getSession() {
 	return session;
 	 }

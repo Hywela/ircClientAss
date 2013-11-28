@@ -13,13 +13,17 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import jerklib.Channel;
+import jerklib.ServerInformation;
 import jerklib.Session;
 import jerklib.events.ChannelListEvent;
+import jerklib.events.ConnectionLostEvent;
 import jerklib.events.ErrorEvent;
 import jerklib.events.IRCEvent;
 import jerklib.events.KickEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.events.NoticeEvent;
+import jerklib.events.ServerInformationEvent;
+import jerklib.events.ServerVersionEvent;
 import jerklib.listeners.IRCEventListener;
 
 public class ConnectorTab extends JPanel implements IRCEventListener {
@@ -86,28 +90,39 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 		// TODO Auto-generated method stub
 		client.setSession(e.getSession());
 		 if (e.getType() == Type.CHANNEL_LIST_EVENT) {
-
+		
 				ChannelListEvent event = (ChannelListEvent) e;
+		
+				if(event.getNumberOfUser() > 500) // incase there are a Billion channels 
+					//-on a server
 				client.addToChanList(event.getChannelName());
-				text.write(event.getChannelName(), Color.GREEN);
 			}
 	 if (e.getType() == Type.CONNECT_COMPLETE) {
 		text.write("Connection Complete", Color.GREEN);
-		client.chanelList();}
+		//client.chanelList();	// if you want to start the chan list at start up
+		}
 	
 	
 		 else if (e.getType() == Type.ERROR) {
 			ErrorEvent errorEvent = (ErrorEvent) e;
 			text.write(e.getRawEventData(), Color.BLACK);
 
-		} else if (e.getType() == Type.INVITE_EVENT) {
+		
+		} else if (e.getType() == Type.SERVER_INFORMATION) {
+			ServerInformationEvent errorEvent = (ServerInformationEvent) e;
+			text.write(errorEvent.getRawEventData(), Color.BLACK);
 
-			text.write(e.getRawEventData(), Color.GREEN);
+		
+		} else if (e.getType() == Type.SERVER_VERSION_EVENT) {
+			ServerVersionEvent errorEvent = (ServerVersionEvent) e;
+			text.write(errorEvent.getHostName(), Color.BLACK);
+			text.write(errorEvent.getVersion(), Color.BLACK);
+		
+		} else if (e.getType() == Type.CONNECTION_LOST) {
+			ConnectionLostEvent errorEvent = (ConnectionLostEvent) e;
+			text.write(errorEvent.getRawEventData(), Color.BLACK);
 
-		} else if (e.getType() == Type.NOTICE) {
-			NoticeEvent event = (NoticeEvent) e;
-
-			text.write(event.getNoticeMessage(), Color.RED);
+		
 		}
 			else if (e.getType() == Type.KICK_EVENT) {
 				KickEvent kickEvent = (KickEvent) e;
@@ -119,9 +134,7 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 			
 				
 			
-		}else{
-				text.write(e.getRawEventData(), Color.RED);
-		}
+		}else text.write(e.getRawEventData(), Color.BLACK);
 
 	}
 
