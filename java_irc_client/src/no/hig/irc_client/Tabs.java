@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractButton;
@@ -27,6 +28,7 @@ import javax.swing.ScrollPaneConstants;
 
 import jerklib.Channel;
 import jerklib.Session;
+import jerklib.events.ChannelListEvent;
 import jerklib.events.ErrorEvent;
 import jerklib.events.IRCEvent;
 import jerklib.events.JoinCompleteEvent;
@@ -63,7 +65,6 @@ public class Tabs extends JPanel implements IRCEventListener {
 		listModel = new DefaultListModel<String>();
 		text = new TextArea();
 		inputField = new JTextField();
-
 		
 		GridLayout grid = new GridLayout(0,1);
 		//PopUpMenue
@@ -165,10 +166,40 @@ public void destructor(Session s){
 	 
 	
 }
+public boolean isUserOP(String nick) {
+    String userName = nick;
+    List<String> usersWithOP = chan.getNicksForMode(ModeAdjustment.Action.PLUS, '@');
+    for (String modNick : usersWithOP) {                //iterates through the list
+    	text.write(modNick, Color.red);
+            if(modNick.equals(userName))                         //equals to the preferences nick?
+                    return true;                                 //okey, the user is the channel operator.
+    }        
+                    return false;                                //NO he isn't!
+}
+ public boolean isUserVoiced(String nick) {
+     String userName = nick;
+     Iterator<String> usersWithOP = chan.getNicksForMode(ModeAdjustment.Action.PLUS, 'v').iterator();
+     while (usersWithOP.hasNext()) {                //iterates through the list
+             String u = usersWithOP.next();        //String u is the next element i the list
+             if(u.equals(userName))                         //equals to the preferences nick?
+                     return true;                                 //okey, the user is voiced.
+     }
+     return false;
+}
 	@Override
 	public void receiveEvent(IRCEvent e) {
 		// TODO Auto-generated method stub
 		client.session = e.getSession();
+		
+		if(notChat){
+			 if (e.getType() == Type.CHANNEL_LIST_EVENT) {
+
+				 ChannelListEvent event = (ChannelListEvent)e;
+					client.addToChanList(event.getChannelName());
+					text.write(event.getChannelName(), Color.GREEN);
+			}}
+		
+		
 		if (e.getType() == Type.JOIN) {
 			JoinEvent joinEvent = (JoinEvent) e;
 			Channel gc = joinEvent.getChannel();
@@ -179,9 +210,9 @@ public void destructor(Session s){
 								+ gc.getName(), Color.BLUE);
 				listModel.addElement(joinEvent.getNick());
 			}
-
-		} else if (e.getType() == Type.CHANNEL_MESSAGE) {
-			MessageEvent me = (MessageEvent) e;
+			}else if (e.getType() == Type.CHANNEL_MESSAGE) {
+			
+				MessageEvent me = (MessageEvent) e;
 			Channel gc = me.getChannel();
 			if (channel.equals(gc.getName())) {
 
@@ -237,9 +268,22 @@ public void destructor(Session s){
 			NickListEvent ne = (NickListEvent) e;
 			Channel gc = ne.getChannel();
 			if (channel.equals(gc.getName())) {			
+				
+					
+					
+				
+
+				
 				List<String> players = ne.getNicks();
-				for (String nick : players)
-					listModel.addElement(nick);
+				for (String nick : players){
+					
+					
+						if(isUserOP(nick)){
+							listModel.addElement("+@"+nick);
+						}else if(isUserVoiced(nick)){
+							listModel.addElement("+v"+nick);
+						}else listModel.addElement("  "+nick);
+				}
 
 			}
 		} else if (e.getType() == Type.QUIT) {
@@ -281,14 +325,6 @@ public void destructor(Session s){
         td = new DefaultListModel<>();
      
           List<ModeAdjustment> tmd1 = chan.getChannelModes();
-				
-          
-          
-          
-          text.write(tmd1.toString(), Color.PINK);
-            	String tmp = modeEvent.getModeAdjustments().toString();
-            	text.write(tmp, Color.PINK);
-             	text.write(modeEvent.setBy(), Color.PINK);
             	
             }
             	
@@ -315,7 +351,8 @@ public void destructor(Session s){
 		}
 
 	}
-
+	
+	 
 	private MouseListener buttonMouseListener = new MouseAdapter() {
 		public void mousePressed( MouseEvent e ) {  
 			if(e.getButton() == MouseEvent.BUTTON1){
@@ -326,7 +363,7 @@ public void destructor(Session s){
 		  
 		        client.newPrivatTab(client.session, selected, null); 
 		        }}
-		     if(e.getButton() == MouseEvent.BUTTON3) {
+		    if(e.getButton() == MouseEvent.BUTTON3) {
 		    	 
 		        int selectedItem = list.getSelectedIndex();
 		        final String selected = listModel.get(selectedItem);

@@ -35,7 +35,9 @@ import javax.swing.SpringLayout.Constraints;
 
 import jerklib.Channel;
 import jerklib.Session;
+import jerklib.events.ChannelListEvent;
 import jerklib.events.IRCEvent;
+import jerklib.events.MessageEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.tasks.TaskImpl;
 
@@ -98,6 +100,9 @@ public final class Client implements Serializable {
 	private final JButton b = new JButton("Connect");
 	DefaultListModel<String> chanModel;
 	JList<DefaultListModel<String>> chan;
+	JTextField inputField;
+
+	JFrame chanFrame;
 	public Client(JFrame frame) {
 
 		this.frame = frame;
@@ -127,15 +132,12 @@ public final class Client implements Serializable {
 	public void chanelList(){
 		chanModel = new DefaultListModel<String>();
 
-					chanModel.addElement("#test_hywel");	
-					chanModel.addElement("#test_hyw");
-					chanModel.addElement("#test_hywe");
-		
-			
-			chan = new JList(chanModel);
-		JFrame frame = new JFrame();
-		JTextField inputField = new JTextField(null,40);
-		JTextArea list = new JTextArea("Test");
+
+		chan = new JList(chanModel);
+		session.chanList();
+		chanFrame = new JFrame();
+		 inputField = new JTextField(null,40);
+	
 		JButton submit, cancle;
 		submit = new JButton("Submit");
 		cancle = new JButton("Cancle");	
@@ -150,20 +152,18 @@ public final class Client implements Serializable {
 	JPanel panel2 = new JPanel();
 	JPanel panel3 = new JPanel();
 	
-	
-		//frame.setLayout(new BorderLayout());
-	//	panel.setLayout(new BorderLayout());
-		//panel2.setLayout(new BorderLayout());
+
 
 		panel.add(new JLabel("Channel : "),BorderLayout.WEST);
 		panel.add(inputField, BorderLayout.CENTER);
 
-	frame.add(panel, BorderLayout.NORTH);
+		chanFrame.add(panel, BorderLayout.NORTH);
 	
 panel2.add(scrollPane,BorderLayout.WEST);
 panel2.add(new JLabel("List : "), BorderLayout.CENTER);
 
-frame.add(panel2, BorderLayout.CENTER);	    
+
+chanFrame.add(panel2, BorderLayout.CENTER);	    
 
 
 
@@ -172,16 +172,22 @@ frame.add(panel2, BorderLayout.CENTER);
 panel3.add(cancle, BorderLayout.EAST);
 panel3.add(submit, BorderLayout.WEST);
 
-frame.add(panel3, BorderLayout.SOUTH);	
+chanFrame.add(panel3, BorderLayout.SOUTH);
 
-		frame.pack();
-		frame.setAlwaysOnTop(true);
+chan.addMouseListener(listListener);
+submit.addActionListener(submitAction);
+cancle.addActionListener(cancleAction);
+
+chanFrame.pack();
+chanFrame.setAlwaysOnTop(true);
 		//frame.setSize(new Dimension(700, 300));
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+chanFrame.setLocationRelativeTo(null);
+chanFrame.setVisible(true);
 		
 	}
-	
+	public void addToChanList(String add){
+		chanModel.addElement(add);
+	}
 	
 	public void newTab(Session sess, String channel) {
 
@@ -306,5 +312,45 @@ frame.add(panel3, BorderLayout.SOUTH);
 			}
 		}
 	};
+	
+	/**
+	 *	 Joins the channel from the inputfield
+	 *	 and exits the window
+	 */
+	public ActionListener submitAction = new ActionListener() {
 
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			joinChannel(inputField.getText());
+		
+			chanFrame.setVisible(false);
+		}
+	};
+	
+	/**
+	 * sets the frame invisible
+	 */
+	public ActionListener cancleAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			chanFrame.setVisible(false);
+				
+			
+		}
+	};
+	/**
+	 * MouseListener listListener 
+	 * Is a listener on rigth click then it finds the text
+	 * clicked on and outputs it in inputfield.
+	 */
+	private MouseListener listListener = new MouseAdapter() {
+		public void mousePressed( MouseEvent e ) {  
+			if(e.getButton() == MouseEvent.BUTTON1){
+				
+				int index = chan.getSelectedIndex();
+				inputField.setText(chanModel.get(index));
+				
+			}
+		}
+	};
 }
