@@ -16,6 +16,7 @@ import java.util.List;
 import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -65,20 +66,20 @@ public class Tabs extends JPanel implements IRCEventListener {
 		listModel = new DefaultListModel<String>();
 		text = new TextArea();
 		inputField = new JTextField();
-		
-		GridLayout grid = new GridLayout(0,1);
-		//PopUpMenue
+
+		GridLayout grid = new GridLayout(0, 1);
+		// PopUpMenue
 		popMenue = new JPopupMenu();
 
 		popMenue.setLayout(grid);
 		op = new JButton("Op");
 
 		deop = new JButton("Deop");
-	
+
 		kick = new JButton("Kick");
 
 		whoise = new JButton("Whoise");
-	
+
 		popMenue.add(op);
 		popMenue.add(deop);
 		popMenue.add(kick);
@@ -146,7 +147,6 @@ public class Tabs extends JPanel implements IRCEventListener {
 					String message = b.getActionCommand().substring(3);
 					switch (sw) {
 					case "j": {
-						
 
 						client.joinChannel(message);
 						break;
@@ -160,46 +160,52 @@ public class Tabs extends JPanel implements IRCEventListener {
 		});
 		s.addIRCEventListener(this);
 	}// END CONSTRUCTORd
-public void destructor(Session s){
-	s.getChannel(channel).part("bye");
-	s.removeIRCEventListener(this);
-	 
-	
-}
-public boolean isUserOP(String nick) {
-    String userName = nick;
-    List<String> usersWithOP = chan.getNicksForMode(ModeAdjustment.Action.PLUS, '@');
-    for (String modNick : usersWithOP) {                //iterates through the list
-    	text.write(modNick, Color.red);
-            if(modNick.equals(userName))                         //equals to the preferences nick?
-                    return true;                                 //okey, the user is the channel operator.
-    }        
-                    return false;                                //NO he isn't!
-}
- public boolean isUserVoiced(String nick) {
-     String userName = nick;
-     Iterator<String> usersWithOP = chan.getNicksForMode(ModeAdjustment.Action.PLUS, 'v').iterator();
-     while (usersWithOP.hasNext()) {                //iterates through the list
-             String u = usersWithOP.next();        //String u is the next element i the list
-             if(u.equals(userName))                         //equals to the preferences nick?
-                     return true;                                 //okey, the user is voiced.
-     }
-     return false;
-}
+
+	public void destructor(Session s) {
+		s.getChannel(channel).part("bye");
+		s.removeIRCEventListener(this);
+
+	}
+
+	public boolean isUserOP(String nick) {
+
+		Channel gc = chan.getSession().getChannel(channel);
+		List<String> usersWithOP = gc.getNicksForMode(
+				ModeAdjustment.Action.PLUS, 'o');
+		for (String modNick : usersWithOP) {
+			if (modNick.equals(nick))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean isUserVoiced(String nick) {
+
+		Channel gc = chan.getSession().getChannel(channel);
+		List<String> usersWithOP = gc.getNicksForMode(
+				ModeAdjustment.Action.PLUS, 'v');
+		for (String modNick : usersWithOP) {
+			if (modNick.equals(nick))
+				return true;
+		}
+		return false;
+
+	}
+
 	@Override
 	public void receiveEvent(IRCEvent e) {
 		// TODO Auto-generated method stub
 		client.session = e.getSession();
-		
-		if(notChat){
-			 if (e.getType() == Type.CHANNEL_LIST_EVENT) {
 
-				 ChannelListEvent event = (ChannelListEvent)e;
-					client.addToChanList(event.getChannelName());
-					text.write(event.getChannelName(), Color.GREEN);
-			}}
-		
-		
+		if (notChat) {
+			if (e.getType() == Type.CHANNEL_LIST_EVENT) {
+
+				ChannelListEvent event = (ChannelListEvent) e;
+				client.addToChanList(event.getChannelName());
+				text.write(event.getChannelName(), Color.GREEN);
+			}
+		}
+
 		if (e.getType() == Type.JOIN) {
 			JoinEvent joinEvent = (JoinEvent) e;
 			Channel gc = joinEvent.getChannel();
@@ -208,11 +214,17 @@ public boolean isUserOP(String nick) {
 				text.write(
 						"<" + joinEvent.getNick() + "> has joined the "
 								+ gc.getName(), Color.BLUE);
-				listModel.addElement(joinEvent.getNick());
+				if (isUserOP(joinEvent.getNick())) {
+					listModel.addElement("@" + joinEvent.getNick());
+				} else if (isUserVoiced(joinEvent.getNick())) {
+					listModel.addElement("+" + joinEvent.getNick());
+				} else
+					listModel.addElement(" " + joinEvent.getNick());
+
 			}
-			}else if (e.getType() == Type.CHANNEL_MESSAGE) {
-			
-				MessageEvent me = (MessageEvent) e;
+		} else if (e.getType() == Type.CHANNEL_MESSAGE) {
+
+			MessageEvent me = (MessageEvent) e;
 			Channel gc = me.getChannel();
 			if (channel.equals(gc.getName())) {
 
@@ -243,11 +255,11 @@ public boolean isUserOP(String nick) {
 
 		} else if (e.getType() == Type.PRIVATE_MESSAGE) {
 
-			
 			MessageEvent pm = (MessageEvent) e; // message event
 			if (!client.findNick(pm.getNick())) {
-				client.newPrivatTab(e.getSession(), pm.getNick(), pm.getMessage());
-				
+				client.newPrivatTab(e.getSession(), pm.getNick(),
+						pm.getMessage());
+
 			}
 
 		} else if (e.getType() == Type.PART) {
@@ -256,7 +268,8 @@ public boolean isUserOP(String nick) {
 			System.out.println(gc.getName());
 			if (channel.equals(gc.getName())) {
 				for (int i = 0; i < listModel.getSize(); i++) {
-					if (listModel.get(i).toString().equals(partEvent.getWho())) {
+					if (listModel.get(i).substring(1).toString()
+							.equals(partEvent.getWho())) {
 						text.write("<" + partEvent.getWho() + "> has quit the "
 								+ gc.getName(), Color.RED);
 
@@ -267,34 +280,28 @@ public boolean isUserOP(String nick) {
 		} else if (e.getType() == Type.NICK_LIST_EVENT) {
 			NickListEvent ne = (NickListEvent) e;
 			Channel gc = ne.getChannel();
-			if (channel.equals(gc.getName())) {			
-				
-					
-					
-				
+			if (channel.equals(gc.getName())) {
 
-				
 				List<String> players = ne.getNicks();
-				for (String nick : players){
-					
-					
-						if(isUserOP(nick)){
-							listModel.addElement("+@"+nick);
-						}else if(isUserVoiced(nick)){
-							listModel.addElement("+v"+nick);
-						}else listModel.addElement("  "+nick);
+				for (String nick : players) {
+
+					if (isUserOP(nick)) {
+						listModel.addElement("@" + nick);
+					} else if (isUserVoiced(nick)) {
+						listModel.addElement("+" + nick);
+					} else
+						listModel.addElement(" " + nick);
 				}
 
 			}
 		} else if (e.getType() == Type.QUIT) {
 			QuitEvent quitEvent = (QuitEvent) e;
 
-			
 			if (listModel.getSize() > quitEvent.getChannelList().size()) {
 				for (int i = 0; i > listModel.getSize(); i++) {
 					text.write(quitEvent.getNick() + "has quit the Channel",
 							Color.RED);
-					if (listModel.get(i) == quitEvent.getNick()) {
+					if (listModel.get(i).substring(1) == quitEvent.getNick()) {
 						listModel.remove(i);
 					}
 				}
@@ -312,23 +319,55 @@ public boolean isUserOP(String nick) {
 
 			text.write(event.getNoticeMessage(), Color.RED);
 		} else if (e.getType() == Type.MODE_EVENT) {
-			//getNicksForMode
-			if(!notChat){
-			ModeEvent modeEvent = (ModeEvent)e;     
-         //casting the object
-			
-            Channel gc = modeEvent.getChannel();   
-            if (channel.equals(gc.getName())) {
-        
-          List<ModeAdjustment> tmd;
-        ListModel< ModeAdjustment> td;
-        td = new DefaultListModel<>();
-     
-          List<ModeAdjustment> tmd1 = chan.getChannelModes();
-            	
-            }
-            	
-            }
+
+			if (!notChat) {
+				ModeEvent modeEvent = (ModeEvent) e;
+				Channel gc = modeEvent.getChannel();
+				if (channel.equals(gc.getName())) {
+					String tmp = modeEvent.getModeAdjustments().toString();
+					text.write(modeEvent.setBy() + " " + tmp, Color.gray);
+					String mod = null;
+					if (tmp.charAt(1) == '+') {
+						if (tmp.charAt(2) == 'o' || tmp.charAt(2) == 'O') {
+
+							mod = "@";
+
+						}
+						if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') { // is
+																			// the
+																			// user
+																			// Voiced?
+							mod = "v";
+						}
+					}
+					if (tmp.charAt(1) == '-') {
+						if (tmp.charAt(2) == 'o' || tmp.charAt(2) == 'O') {
+
+							mod = "";
+
+						}
+						if (tmp.charAt(2) == 'v' || tmp.charAt(2) == 'V') { // is
+																			// the
+																			// user
+																			// Voiced?
+							mod = "";
+						}
+					}
+
+					String userName = "" + tmp.subSequence(4, tmp.length() - 1);
+					text.write(listModel.get(1).substring(1), Color.gray);
+					for (int i = 0; i < listModel.getSize(); i++) {
+
+						if (listModel.get(i).substring(1).equals(userName)) {
+
+							text.write(userName, Color.gray);
+							listModel.set(i, mod + userName);
+						} // casting the object
+					}
+
+				}
+
+			}
 		} else if (e.getType() == Type.MOTD) {
 		} else if (e.getType() == Type.KICK_EVENT) {
 			KickEvent kickEvent = (KickEvent) e;
@@ -336,7 +375,8 @@ public boolean isUserOP(String nick) {
 			System.out.println(gc.getName());
 			if (channel.equals(gc.getName())) {
 				for (int i = 0; i < listModel.getSize(); i++) {
-					if (listModel.get(i).toString().equals(kickEvent.getWho())) {
+					if (listModel.get(i).toString().substring(1)
+							.equals(kickEvent.getWho())) {
 						text.write("<" + kickEvent.getWho() + "> has quit the "
 								+ gc.getName(), Color.RED);
 
@@ -346,83 +386,111 @@ public boolean isUserOP(String nick) {
 			}
 
 		} else {
-			if(notChat)
-			text.write(e.getRawEventData(), Color.RED);
+			if (notChat)
+				text.write(e.getRawEventData(), Color.RED);
 		}
 
 	}
-	
-	 
+
 	private MouseListener buttonMouseListener = new MouseAdapter() {
-		public void mousePressed( MouseEvent e ) {  
-			if(e.getButton() == MouseEvent.BUTTON1){
-			if(e.getClickCount() == 2)
-		    {	int selectedItem = list.getSelectedIndex();
-		        String selected = listModel.get(selectedItem);
-		        
-		  
-		        client.newPrivatTab(client.session, selected, null); 
-		        }}
-		    if(e.getButton() == MouseEvent.BUTTON3) {
-		    	 
-		        int selectedItem = list.getSelectedIndex();
-		        final String selected = listModel.get(selectedItem);
-		        text.write(selected, Color.RED);
-		    	popMenue.show(e.getComponent(), e.getX(), e.getY());
-		    	
-		    	deop.addActionListener(new ActionListener() {
+		public void mousePressed(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				if (e.getClickCount() == 2) {
+					int selectedItem = list.getSelectedIndex();
+					String selected = listModel.get(selectedItem);
+
+					client.newPrivatTab(client.session, selected.substring(1), null);
+				}
+			}
+			if (e.getButton() == MouseEvent.BUTTON3) {
+
+				int selectedItem = list.getSelectedIndex();
+				final String selected = listModel.get(selectedItem);
+				
+				popMenue.show(e.getComponent(), e.getX(), e.getY());
+
+				deop.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						chan.deop(selected.substring(1));
+
+					}
+				});
+
+				kick.addActionListener(new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						chan.deop(selected);
+						final JFrame kickFrame = new JFrame();
 						
+						JButton cancle = new JButton("Cancle");
+						JButton kickButton = new JButton("Kick");
+						final JTextField field = new JTextField(20);
+						JPanel pan = new JPanel();
+						pan.add(new JLabel("Reason for kick: "));
+						pan.add(field);
+						kickFrame.add(pan, BorderLayout.NORTH);
+						JPanel panel = new JPanel();
+							panel.add(cancle);
+							panel.add(kickButton);
+							kickFrame.add(panel, BorderLayout.SOUTH);
+							kickFrame.pack();
+							kickFrame.setAlwaysOnTop(true);
+							kickFrame.setVisible(true);
+						kickButton.addActionListener(new ActionListener() {
+							
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								kickFrame.setVisible(false);
+									chan.kick(selected.substring(1), field.getText());
+							}
+						});
+						cancle.addActionListener(new ActionListener() {
+							
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								kickFrame.setVisible(false);
+								
+							}
+						});
+					
+
 					}
 				});
-		    	
-			    		
-		    	kick.addActionListener(new ActionListener() {
-					
-					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						chan.kick(selected, "not implemented");
-						
-					}
-				});
-		    	op.addActionListener(new ActionListener() {
-					
+				op.addActionListener(new ActionListener() {
+
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						chan.op(selected);
-						
+
 					}
-				});		    	
-		    	whoise.addActionListener(new ActionListener() {
-					
+				});
+				whoise.addActionListener(new ActionListener() {
+
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						client.session.whois(selected);
-						
+
 						client.session.onEvent(new TaskImpl("WHOIS_EVENT") {
 							public void receiveEvent(IRCEvent e) {
-								WhoisEvent we = (WhoisEvent)e;
-		text.write(we.getNick() + " : " + we.getHost(), Color.BLUE);
-		text.write("Channels in : " + we.getChannelNames(), Color.BLUE);					
-								}
-
-						
+								WhoisEvent we = (WhoisEvent) e;
+								text.write(we.getNick() + " : " + we.getHost(),
+										Color.BLUE);
+								text.write(
+										"Channels in : " + we.getChannelNames(),
+										Color.BLUE);
+							}
 
 						}, Type.WHOIS_EVENT);
-						
-						
+
 					}
-				});		    	
-		    	
-		     }
-		    
+				});
+
+			}
+
 		}
 
-
-};
+	};
 
 }
-
