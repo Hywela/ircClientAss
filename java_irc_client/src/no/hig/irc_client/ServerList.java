@@ -36,6 +36,7 @@ public class ServerList{
 		saveList();
 	}
 	
+	
 	private void loadList(){
 		File f = new File("serverlist.bin");
 		if (f.exists()){
@@ -96,5 +97,9 @@ public class ServerList{
 			nameList.add(list.get(i).getName());
 		}
 		return nameList;
-	}	
+	}
+	
+	public int getLength(){
+		return list.size();
+	}
 }

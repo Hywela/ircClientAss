@@ -10,10 +10,6 @@ import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import no.hig.irc_client.Language;
-import no.hig.irc_client.Client;
-import jerklib.Session;
-
 
 //hei
 
@@ -69,19 +65,8 @@ public void newChannelTab(){
 		gui.setSize(460, 225);
 		gui.setLocation(300,300);
 		gui.setVisible(true);
-		
-		/**JFrame frame = new JFrame("Server List");
-        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        //Create and set up the content pane.
-        ServerListLayout gui = new ServerListLayout();
-        //gui.setOpaque(true); //content panes must be opaque
-        frame.setContentPane(gui);
-        frame.setLocation(300, 300);
-        frame.pack();
-        frame.setVisible(true);
-        **/
 	}
-		
+
 	
 	 public void fileMenu() {
 
@@ -102,7 +87,7 @@ public void newChannelTab(){
          JMenuItem channelListAction = new JMenuItem(Language.getMsg("channelList"));
          JMenuItem profileSettingsAction = new JMenuItem(Language.getMsg("profileSettings"));
          JMenuItem conAction = new JMenuItem("newConnection");
-         JMenuItem saveAction = new JMenuItem(Language.getMsg("save_file"));
+         JMenuItem importServers = new JMenuItem(Language.getMsg("importServers"));
          JMenuItem exitAction = new JMenuItem(Language.getMsg("exit"));
          JMenuItem newItemAction = new JMenuItem(Language.getMsg("add"));
          JMenuItem deleteItemAction = new JMenuItem(Language.getMsg("delete"));
@@ -111,7 +96,7 @@ public void newChannelTab(){
          fileMenu.add(serverListAction);
          fileMenu.add(channelListAction);
          fileMenu.add(conAction);
-         fileMenu.add(saveAction);
+         fileMenu.add(importServers);
          fileMenu.addSeparator();
          fileMenu.add(exitAction);
 
@@ -143,11 +128,7 @@ public void newChannelTab(){
         	 
      });
 
-         saveAction.addActionListener(new ActionListener(){
-       	  public void actionPerformed(ActionEvent ae) {
-    		  
-    	  }
-      });
+         importServers.addActionListener(new ImportServers());
        	  
          exitAction.addActionListener(new ActionListener() {
                  public void actionPerformed(ActionEvent ae) {

@@ -23,6 +23,7 @@ import javax.swing.event.ListSelectionListener;
 @SuppressWarnings("serial")
 public class ServerListLayout extends JDialog{
 	
+	private boolean serverAdded;
 	private boolean newChanges;
 	private int changedField;
 	private boolean listenForChange;
@@ -48,8 +49,8 @@ public class ServerListLayout extends JDialog{
 	JTextField networkField;
 	
     public ServerListLayout(final JFrame frame) {
-    	changedField = -1;
     	newChanges = false;
+    	changedField = -1;
     	layoutSetup();
     	
     	
@@ -57,12 +58,19 @@ public class ServerListLayout extends JDialog{
 		list.addListSelectionListener(
 				new ListSelectionListener() {
 					public void valueChanged(ListSelectionEvent event){
-						if(changedField == -1){
-							changedField = list.getSelectedIndex();			//Save the list item that have been changed
-							updateTextBoxes(list.getSelectedIndex());
+						if(serverAdded){
+							list.setSelectedIndex(serverList.getLength()-1);
+							serverAdded = false;
 						}
-						submit.setEnabled(true); 	//when an item is selected Activate submit and delete button
-						delete.setEnabled(true);
+						if(list.getSelectedIndex() >= 0){
+							changedField = list.getSelectedIndex();			//Save the list item that have been changed
+							updateTextBoxes(changedField);
+							submit.setEnabled(true); 	//when an item is selected Activate submit and delete button
+							delete.setEnabled(true);
+						}else{
+							updateTextBoxes(changedField);
+							list.setEnabled(true);
+						}
 					}
 				}
 		);
@@ -152,7 +160,7 @@ public class ServerListLayout extends JDialog{
     
     //Fields have changed, call this function
 	private void textFieldsChanged(){
-		if(listenForChange){ 	//If the user changed the field and not the field updater
+		if(listenForChange && changedField >= 0){ 	//If the user changed the field and not the field updater
 			submit.setText(Language.getMsg("saveChanges"));	//Change the connect button to save
 			newChanges = true;
 			list.setEnabled(false);							//Disable the list until changes is saved
@@ -164,14 +172,23 @@ public class ServerListLayout extends JDialog{
     
 	//Update text boxes with new information
 	private void updateTextBoxes(int serverIndex){
-    	Server server = serverList.getServer(serverIndex);
     	listenForChange = false;
-    	nameField.setText(server.getName());
-    	urlField.setText(server.getUrl());
-    	portField.setText(""+server.getPort());
-    	continentField.setText(server.getContinent());
-    	stateField.setText(server.getState());
-    	networkField.setText(server.getNetwork());
+    	if(serverIndex < 0 || serverIndex > serverList.getLength()-1){
+    		nameField.setText("");
+	    	urlField.setText("");
+	    	portField.setText("");
+	    	continentField.setText("");
+	    	stateField.setText("");
+	    	networkField.setText("");
+    	}else{
+    		Server server = serverList.getServer(serverIndex);
+	    	nameField.setText(server.getName());
+	    	urlField.setText(server.getUrl());
+	    	portField.setText(""+server.getPort());
+	    	continentField.setText(server.getContinent());
+	    	stateField.setText(server.getState());
+	    	networkField.setText(server.getNetwork());
+    	}
     	listenForChange = true;
     }
     
@@ -276,7 +293,6 @@ public class ServerListLayout extends JDialog{
         serverList = new ServerList();
         
         list = new JList (serverList.getNameList().toArray());
-        //list.setVisibleRowCount(10);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		c.anchor = GridBagConstraints.EAST;
@@ -327,16 +343,22 @@ public class ServerListLayout extends JDialog{
   
     //delete selected list item
     private void deleteListItem(){
-    	serverList.deleteListItem(list.getSelectedIndex());
+    	serverList.deleteListItem(changedField);
     	updateList();
     	delete.setEnabled(false);
     	submit.setEnabled(false);
+    	changedField = -1;
+    	updateTextBoxes(changedField);
     }
     
     //Add new server
     private void addServer(){
+    	serverAdded = true;
     	serverList.addNewServer(null, "New Server", 0, null, null, null);
     	updateList();
+    	changedField = serverList.getLength()-1;
+    	updateTextBoxes(changedField);
+    	list.requestFocus();
     }
     
     //Connect or save changes to server
@@ -371,7 +393,7 @@ public class ServerListLayout extends JDialog{
     
     //update the displayed list
     private void updateList(){
-    	//serverList = new ServerList();
     	list.setListData(serverList.getNameList().toArray());
+    	
     }
 }

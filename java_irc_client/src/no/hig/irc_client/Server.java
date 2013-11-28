@@ -12,6 +12,15 @@ public class Server implements Serializable {
 	private String state;
 	private String network;
 	
+	Server(){
+		url = null;
+		name = null;
+		port = defaultPort;
+		continent = null;
+		state = null;
+		network = null;
+	}
+	
 	Server(String serverUrl, String serverName, int serverPort, String serverContinent, String serverState, String serverNetwork ){
 		url = serverUrl;
 		name = serverName == null ? url : serverName;			//name set to url if empty
