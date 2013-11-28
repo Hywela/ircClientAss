@@ -23,18 +23,14 @@ private JFrame frame;
 	client.serFrame(frame);
 		fileMenu();
 		
-	}
-	
-	
+	}	
 public void newTab(){
 
 	
 }
 public void newChannelTab(){
 	client.joinChannel("#test_hywel");
-
 }
-	
 	 public static void main(String[] args) {
 		 
 	     Language.setLocale(args);
