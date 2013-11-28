@@ -9,26 +9,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JTable;
-
-public class ServerList extends JDialog {
+public class ServerList{
 
 	private ArrayList<Server> list = new ArrayList<Server>();
-	private JTable table = new JTable();
-	
-	
 	public ServerList(){
-		System.out.println("Creating serverlist");
 		loadList();
-		System.out.println("Server List created");
 	}
 	
-	public ServerList(final JFrame frame){
-		loadList();
-		
-		
+	public void deleteListItem(int indexToDelete){
+		list.remove(indexToDelete);
+		saveList();
 	}
 	
 	void add(Server server){
@@ -36,20 +26,26 @@ public class ServerList extends JDialog {
 		saveList();
 	}
 	
+	public void addNewServer(String serverName, String serverUrl, int serverPort, String serverContinent, String serverState, String serverNetwork){
+		Server nServer = new Server(serverUrl, serverName, serverPort, serverContinent, serverState, serverNetwork);
+		add(nServer);
+	}
+	
+	void updateListItem(int index, String serverUrl, String serverName, int serverPort, String serverContinent, String serverState, String serverNetwork){
+		getServer(index).update(serverUrl, serverName, serverPort, serverContinent, serverState, serverNetwork);
+		saveList();
+	}
+	
 	private void loadList(){
 		File f = new File("serverlist.bin");
 		if (f.exists()){
-			System.out.println("File Exists");
 			try {
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
 				list.clear();
 				try {
-					System.out.println("Reading stuff from file: ");
 					while (true) {
 						Server server = (Server)ois.readObject();
-						System.out.println(server.getUrl());
 						list.add(server);
-						System.out.println("added to list");
 					}
 				} catch (EOFException eofe) {
 					//end of file
@@ -70,11 +66,6 @@ public class ServerList extends JDialog {
 	}
 	
 	private void saveList(){
-		System.out.println("Saving List..");
-		//print stuff to se whats up
-		for(int i = 0; i < list.size(); i++){
-			System.out.println(list.get(i).getUrl());
-		}
 		File f = new File("serverlist.bin");
 		ObjectOutputStream oos = null;
 		try {
@@ -93,10 +84,17 @@ public class ServerList extends JDialog {
 			oos.close();
 		} catch (IOException e) {
 		}
-		System.out.println("List saved");
 	}
 	
 	Server getServer(int index){
 		return list.get(index);
 	}
+	
+	ArrayList<String> getNameList(){
+		ArrayList<String> nameList = new ArrayList<String>();
+		for(int i = 0; i < list.size(); i++){
+			nameList.add(list.get(i).getName());
+		}
+		return nameList;
+	}	
 }

@@ -37,7 +37,6 @@ public class ProfileSettings extends JDialog {
 	}
 	public ProfileSettings(){
 		profile = new jerklib.Profile("Hywel","Hywela", "HYW", "HYW3");
-		
 	}
 	
 	//edit profile constructor
@@ -98,6 +97,7 @@ public class ProfileSettings extends JDialog {
 		
 		GridBagConstraints c = new GridBagConstraints();
 		//Labels
+		c.insets = new Insets(1,5,0,5);
 		c.anchor = GridBagConstraints.EAST;
 		c.gridx = 0;
 		c.gridy = 0;
@@ -114,8 +114,8 @@ public class ProfileSettings extends JDialog {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
 		c.weightx = 1;
-		c.gridwidth = 1;
-		c.gridx = 2;
+		c.gridwidth = 2;
+		c.gridx = 1;
 		c.gridy = 0;
 		add(username, c);
 		c.gridy = 1;
@@ -145,13 +145,10 @@ public class ProfileSettings extends JDialog {
 	private void submit(JFrame frame){
 		frame.setVisible(false);
 		profile = new jerklib.Profile(username.getText(), realName.getText(), primaryNick.getText(), altNick1.getText());
-	
-	
 	}
 	
 	//returns current profile
 	public jerklib.Profile getProfile(){
-		
 		return profile;
 	}
 	
