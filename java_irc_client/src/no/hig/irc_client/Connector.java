@@ -34,9 +34,12 @@ public class Connector  {
 		
 	}
 public void newConnection(){
+	Prefs p = new Prefs();
 	ProfileSettings profile = new ProfileSettings();
-	manager = new ConnectionManager(profile.getProfile()); 
-	session = manager.requestConnection("uk.quakenet.org");
+	manager = new ConnectionManager(profile.getProfile());
+	System.out.println(p.getLastServer());
+	System.out.println(p.getLastPort());
+	session = manager.requestConnection(p.getLastServer(), p.getLastPort());
 }
 	public void quit(){
 		manager.quit();

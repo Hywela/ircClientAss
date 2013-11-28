@@ -14,17 +14,17 @@ import javax.swing.JTextField;
 
 public class ProfileSettings extends JDialog {
 	
+	Prefs p;
 	jerklib.Profile profile;
 	JLabel usernameLabel;
 	JLabel realNameLabel;
 	JLabel primaryNickLabel;
-	JLabel altNick1Label;
-	JLabel altNick2Label;
+	JLabel altNickLabel;
 	JTextField username;
 	JTextField realName;
 	JTextField primaryNick;
-	JTextField altNick1;
-	JTextField altNick2;
+	JTextField altNick;
+	
 	
 	JButton cancel;
 	JButton submit;
@@ -33,25 +33,21 @@ public class ProfileSettings extends JDialog {
 	public ProfileSettings(final JFrame frame){
 		super(frame, Language.getMsg("profileSettings"));
 
+		p = new Prefs();
 		addLayout(frame);
+		username.setText(p.getUsername());
+		realName.setText(p.getRealName());
+		primaryNick.setText(p.getPrimaryNick());
+		altNick.setText(p.getAltNick());
 	}
 	public ProfileSettings(){
-		profile = new jerklib.Profile("Hywel","Hywela", "HYW", "HYW3");
+		p = new Prefs();
+		if(p.getUsername().equals(null)||p.getUsername().equals("")){
+			addLayout(new JFrame());
+		}else{
+			profile = new jerklib.Profile(p.getUsername(),p.getRealName(), p.getPrimaryNick(), p.getAltNick());
+		}
 	}
-	
-	//edit profile constructor
-	public ProfileSettings(JFrame frame, Profile prof){
-		super(frame, "Create Profile");
-		
-		username.setText(prof.getUsername());
-		realName.setText(prof.getRealName());
-		primaryNick.setText(prof.getPrimaryNick());
-		altNick1.setText(prof.getAltNick1());
-		altNick2.setText(prof.getAltNick2());
-		
-		addLayout(frame);
-	}
-	
 	
 	//sets up the UI layout for the profile window and adds all the fields and button listeners
 	private void addLayout(final JFrame frame){
@@ -60,18 +56,15 @@ public class ProfileSettings extends JDialog {
 		usernameLabel = new JLabel(Language.getMsg("Username"));
 		realNameLabel = new JLabel(Language.getMsg("RealName"));
 		primaryNickLabel = new JLabel(Language.getMsg("PrimaryNick"));
-		altNick1Label = new JLabel(Language.getMsg("AltNick1"));
-		altNick2Label = new JLabel(Language.getMsg("AltNick2"));
+		altNickLabel = new JLabel(Language.getMsg("AltNick"));
 		username = new JTextField(32);
 		username.setToolTipText(Language.getMsg("Username"));
 		realName = new JTextField(32);
 		realName.setToolTipText(Language.getMsg("RealName"));
 		primaryNick = new JTextField(32);
 		primaryNick.setToolTipText(Language.getMsg("PrimaryNick"));
-		altNick1 = new JTextField(32);
-		altNick1.setToolTipText(Language.getMsg("AltNick1"));
-		altNick2 = new JTextField(32);
-		altNick2.setToolTipText(Language.getMsg("AltNick2"));
+		altNick = new JTextField(32);
+		altNick.setToolTipText(Language.getMsg("AltNick"));
 		submit = new JButton(Language.getMsg("Submit"));
 		submit.setToolTipText(Language.getMsg("Submit"));
 		cancel = new  JButton(Language.getMsg("Cancel"));
@@ -107,9 +100,8 @@ public class ProfileSettings extends JDialog {
 		c.gridy = 2;
 		add(primaryNickLabel, c);
 		c.gridy = 3;
-		add(altNick1Label, c);
+		add(altNickLabel, c);
 		c.gridy = 4;
-		add(altNick2Label, c);
 	
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.anchor = GridBagConstraints.CENTER;
@@ -123,9 +115,8 @@ public class ProfileSettings extends JDialog {
 		c.gridy = 2;
 		add(primaryNick, c);
 		c.gridy = 3;
-		add(altNick1, c);
+		add(altNick, c);
 		c.gridy = 4;
-		add(altNick2, c);
 		
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0;
@@ -144,7 +135,8 @@ public class ProfileSettings extends JDialog {
 	//Overwrites the profile with a new one
 	private void submit(JFrame frame){
 		frame.setVisible(false);
-		profile = new jerklib.Profile(username.getText(), realName.getText(), primaryNick.getText(), altNick1.getText());
+		p.saveProfile(username.getText(), realName.getText(), primaryNick.getText(), altNick.getText());
+		profile = new jerklib.Profile(username.getText(), realName.getText(), primaryNick.getText(), altNick.getText());
 	}
 	
 	//returns current profile

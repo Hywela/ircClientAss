@@ -161,9 +161,10 @@ public class ServerListLayout extends JDialog{
     //Fields have changed, call this function
 	private void textFieldsChanged(){
 		if(listenForChange && changedField >= 0){ 	//If the user changed the field and not the field updater
-			submit.setText(Language.getMsg("saveChanges"));	//Change the connect button to save
+			submit.setText(Language.getMsg("saveChanges"));	//Change the submit button to save
 			newChanges = true;
 			list.setEnabled(false);							//Disable the list until changes is saved
+			submit.setEnabled(true);
 			warningLabel.setVisible(true);					//Show notification
 			warningLabel.setText(serverList.getServer(changedField).getName()+ " " + "Was changed");
 		}
@@ -264,8 +265,8 @@ public class ServerListLayout extends JDialog{
       //Buttons
 		addServer = new JButton(Language.getMsg("addServer"));
 		addServer.setToolTipText(Language.getMsg("addServer"));
-        submit = new JButton(Language.getMsg("connect"));
-		submit.setToolTipText(Language.getMsg("connect"));
+        submit = new JButton(Language.getMsg("Submit"));
+		submit.setToolTipText(Language.getMsg("Submit"));
 		submit.setEnabled(false);
 		delete = new JButton(Language.getMsg("delete"));
 		delete.setToolTipText(Language.getMsg("delete"));
@@ -361,7 +362,7 @@ public class ServerListLayout extends JDialog{
     	list.requestFocus();
     }
     
-    //Connect or save changes to server
+    //Submit or save changes to server
     private void submit(){
     	if(newChanges){//Save server list
     		//Update list item that was changed
@@ -369,11 +370,11 @@ public class ServerListLayout extends JDialog{
 			continentField.getText(), stateField.getText() ,networkField.getText());
     		updateList();	//refresh the listview
     		warningLabel.setVisible(false);					//Hide the warning
-    		submit.setText(Language.getMsg("connect"));		//Change button to connect
+    		submit.setText(Language.getMsg("Submit"));		//Change button to submit
     		newChanges=false;								//set new changes to false after saving them to list
     		list.setEnabled(true);							//enable the list again
-    	}else{ //connect to selected server
-    		//TODO CONNECT TO SELECTED SERVER
+    	}else{ //submit to selected server
+    		new Prefs().saveLastServer(urlField.getText(),Integer.parseInt(portField.getText()));
     		setVisible(false);
     	}
     }
@@ -383,10 +384,10 @@ public class ServerListLayout extends JDialog{
     	if(newChanges){//Save server list
     		updateList();
     		updateTextBoxes(changedField);
-    		submit.setText(Language.getMsg("connect"));
+    		submit.setText(Language.getMsg("Submit"));
     		warningLabel.setVisible(false);
     		list.setEnabled(true);
-    	}else{ //connect to selected server
+    	}else{ //submit to selected server
     		setVisible(false);
     	}
     }

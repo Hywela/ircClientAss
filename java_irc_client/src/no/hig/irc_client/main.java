@@ -22,7 +22,10 @@ private JFrame frame;
 	client = client.getInstance();
 	client.serFrame(frame);
 		fileMenu();
-		
+		Prefs p = new Prefs();
+		if(p.getUsername().equals(null) || p.getUsername().equals("")){
+			profileMenu();
+		}
 	}	
 public void newTab(){
 client.joinChannel("#test_hywel");
