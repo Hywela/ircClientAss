@@ -10,6 +10,12 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
+/**
+ * Imports standard list of servers you get with mirc
+ * 
+ * @author Uhu
+ *
+ */
 public class ImportServers implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -30,6 +36,11 @@ public class ImportServers implements ActionListener {
 	}
 	
 	
+	/**
+	 * Extracts information out of a String line from the text file
+	 * 
+	 * @param line
+	 */
 	private void prosessLine(String line){
 		Server s = new Server();
 		if (line.contains("SERVER:")) {
