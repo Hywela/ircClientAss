@@ -168,7 +168,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 	 *            (Session)
 	 */
 	public void destructor(Session s) {
-		s.getChannel(channel).part("bye");
+		s.getChannel(channel).part(Language.getMsg("bye"));
 		s.removeIRCEventListener(this);
 	}
 
@@ -254,7 +254,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 			Channel gc = joinEvent.getChannel();
 			if (channel.equals(gc.getName())) {
 				text.write(
-						"<" + joinEvent.getNick() + "> has joined the "
+						"<" + joinEvent.getNick() + "> "+Language.getMsg("haveJoined")+" "
 								+ gc.getName(), Color.BLUE, client
 								.getSettings().getSize(), client.getSettings()
 								.getFont());
@@ -311,7 +311,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 					}
 
 					if (selected.equals(partEvent.getWho())) {
-						text.write("<" + partEvent.getWho() + "> has quit the "
+						text.write("<" + partEvent.getWho() + "> "+Language.getMsg("haveLeft") +" "
 								+ gc.getName(), Color.RED, client.getSettings()
 								.getSize(), client.getSettings().getFont());
 
@@ -343,7 +343,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 			QuitEvent quitEvent = (QuitEvent) e;
 
 			for (int i = 0; i > listModel.getSize(); i++) {
-				text.write(quitEvent.getNick() + "has quit the Channel",
+				text.write(quitEvent.getNick() + Language.getMsg("haveLeftChannel"),
 						Color.RED, client.getSettings().getSize(), client
 								.getSettings().getFont());
 				String selected = listModel.get(i).toString();
@@ -378,7 +378,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 			Channel gc = modeEvent.getChannel();
 			if (channel.equals(gc.getName())) {
 				String tmp = modeEvent.getModeAdjustments().toString();
-				text.write(modeEvent.setBy() + " sets " + tmp, Color.gray,
+				text.write(modeEvent.setBy() + " "+Language.getMsg("sets")+" " + tmp, Color.gray,
 						client.getSettings().getSize(), client.getSettings()
 								.getFont());
 				String mod = "";
@@ -467,11 +467,11 @@ public class Tabs extends JPanel implements IRCEventListener {
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 
-						JButton cancle = new JButton("Cancle");
-						JButton kickButton = new JButton("Kick");
+						JButton cancle = new JButton(Language.getMsg("cancel"));
+						JButton kickButton = new JButton(Language.getMsg("Kick"));
 						final JTextField field = new JTextField(20);
 						JPanel pan = new JPanel();
-						pan.add(new JLabel("Reason for kick: "));
+						pan.add(new JLabel(Language.getMsg("kickReason"+": ")));
 						pan.add(field);
 						kickFrame.add(pan, BorderLayout.NORTH);
 						JPanel panel = new JPanel();
@@ -553,7 +553,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 														.getSettings()
 														.getFont());
 										text.write(
-												"Channels in : "
+												Language.getMsg("ChannelsIn")+" : "
 														+ we.getChannelNames(),
 												Color.BLUE, client
 														.getSettings()

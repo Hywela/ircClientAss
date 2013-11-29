@@ -46,7 +46,7 @@ public class PrivateMessage extends JPanel {
 
 		notChat = false;
 
-		text.write("Joining Private message with  : " + pmNick, Color.BLUE,
+		text.write(Language.getMsg("JoiningPrivateChatWith")+"  : " + pmNick, Color.BLUE,
 				client.getSettings().getSize(), client.getSettings().getFont());
 		text.setEditable(false);
 
@@ -92,7 +92,6 @@ public class PrivateMessage extends JPanel {
 
 		s.onEvent(new TaskImpl("PRIVATE_MESSAGE") {
 			public void receiveEvent(IRCEvent e) {
-				System.out.println("ddd");
 				Client client = null;
 				client = Client.getInstance();
 				MessageEvent pm = (MessageEvent) e; // message event

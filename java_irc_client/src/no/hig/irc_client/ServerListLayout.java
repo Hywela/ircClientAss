@@ -416,7 +416,7 @@ public class ServerListLayout extends JDialog {
 	 */
 	private void addServer() {
 		serverAdded = true;
-		serverList.addNewServer(null, "New Server", 0, null, null, null);
+		serverList.addNewServer(null, Language.getMsg("newServer"), 0, null, null, null);
 		updateList();
 		changedField = serverList.getLength() - 1;
 		updateTextBoxes(changedField);
