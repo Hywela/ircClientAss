@@ -12,8 +12,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+/**
+ * Class for handeling, creating and editing the Jerklib profile
+ * 
+ * @author Uhu
+ *
+ */
 public class ProfileSettings extends JDialog {
-	
 	Prefs p;
 	jerklib.Profile profile;
 	JLabel usernameLabel;
@@ -29,7 +34,13 @@ public class ProfileSettings extends JDialog {
 	JButton cancel;
 	JButton submit;
 
-	//create profile constructor
+	
+	/**
+	 * initiates and displays the user profile based on
+	 * the information stored in the preferences
+	 * 
+	 * @param frame
+	 */
 	public ProfileSettings(final JFrame frame){
 		super(frame, Language.getMsg("profileSettings"));
 
@@ -40,6 +51,12 @@ public class ProfileSettings extends JDialog {
 		primaryNick.setText(p.getPrimaryNick());
 		altNick.setText(p.getAltNick());
 	}
+	
+	
+	/**
+	 * creates a jerklib profile if there is information stoored in prefrerences
+	 * else displays the layout for editing profile
+	 */
 	public ProfileSettings(){
 		p = new Prefs();
 		if(p.getUsername().equals(null)||p.getUsername().equals("")){
@@ -49,7 +66,12 @@ public class ProfileSettings extends JDialog {
 		}
 	}
 	
-	//sets up the UI layout for the profile window and adds all the fields and button listeners
+	
+	/**
+	 * Sets up the gui and button listeners for profile settings
+	 * 
+	 * @param frame
+	 */
 	private void addLayout(final JFrame frame){
 		setLayout(new GridBagLayout());
 		
@@ -132,14 +154,21 @@ public class ProfileSettings extends JDialog {
 	}
 	
 	
-	//Overwrites the profile with a new one
+	/**
+	 * overwrites the profile with a new one
+	 * 
+	 * @param frame
+	 */
 	private void submit(JFrame frame){
 		frame.setVisible(false);
 		p.saveProfile(username.getText(), realName.getText(), primaryNick.getText(), altNick.getText());
 		profile = new jerklib.Profile(username.getText(), realName.getText(), primaryNick.getText(), altNick.getText());
 	}
 	
-	//returns current profile
+	
+	/**
+	 * @return Returns the current profile
+	 */
 	public jerklib.Profile getProfile(){
 		return profile;
 	}

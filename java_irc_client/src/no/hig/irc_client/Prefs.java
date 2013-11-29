@@ -7,6 +7,9 @@ public class Prefs {
 	private String defaultServer;
 	private int defaultPort;
 	
+    /**
+     * Creates node and declares default values
+     */
     public Prefs(){
     	//Create node to store prefs
     	prefs = Preferences.userRoot().node(this.getClass().getName());
@@ -15,6 +18,12 @@ public class Prefs {
     	defaultPort = 6667;
     }
     
+    /**
+     * Saves last used server information to be used when requesting a connection
+     * 
+     * @param url
+     * @param port
+     */
     public void saveLastServer(String url, int port){
     	setLastServer(url);
     	setLastPort(port);
@@ -35,33 +44,41 @@ public class Prefs {
 	}
 	
 	public String getUsername(){
-    	return prefs.get("username", null);
+    	return prefs.get("username", "");
     }
 	public void setUsername(String username){
 		prefs.put("username", username);
 	}
 	
 	public String getRealName(){
-    	return prefs.get("realName", null);
+    	return prefs.get("realName", "");
     }
 	public void setRealName(String realName){
 		prefs.put("realName", realName);
 	}
 	
 	public String getPrimaryNick(){
-    	return prefs.get("primaryNick", null);
+    	return prefs.get("primaryNick", "");
     }
 	public void setPrimaryNick(String primaryNick){
 		prefs.put("primaryNick", primaryNick);
 	}
 	
 	public String getAltNick(){
-    	return prefs.get("altNick", null);
+    	return prefs.get("altNick", "");
     }
 	public void setAltNick(String altNick){
 		prefs.put("altNick", altNick);
 	}
 	
+	/**
+	 * Saves all info about the user
+	 * 
+	 * @param username
+	 * @param realName
+	 * @param primaryNick
+	 * @param altNick
+	 */
 	public void saveProfile(String username, String realName, String primaryNick, String altNick){
 		prefs.put("username", username);
 		prefs.put("realName", realName);

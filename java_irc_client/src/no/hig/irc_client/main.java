@@ -23,7 +23,7 @@ private JFrame frame;
 	client.serFrame(frame);
 		fileMenu();
 		Prefs p = new Prefs();
-		if(p.getUsername().equals(null) || p.getUsername().equals("")){
+		if(p.getUsername().equals("")){
 			profileMenu();
 		}
 	}	
