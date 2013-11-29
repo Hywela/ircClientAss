@@ -39,7 +39,7 @@ public class TextArea extends JTextPane  implements DocumentListener, Scrollable
    	   // build a style
    	 Style style = context.addStyle("test", null);
    	  
-
+   	 
    	 StyleConstants.setFontFamily(style, Font);
    	 StyleConstants.setFontSize(style, size);
    	   // set some style properties
