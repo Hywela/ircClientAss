@@ -93,7 +93,7 @@ public final class Client implements Serializable {
 	private Connector con = null;
 	private Session session = null;
 	private final JTabbedPane pane = new JTabbedPane();
-	private final JButton connect = new JButton("Connect");
+	private final JButton connect = new JButton(Language.getMsg("connect"));
 	private DefaultListModel<String> chanModel;
 	private JList<DefaultListModel<String>> chan;
 	private JTextField inputField;
@@ -116,15 +116,15 @@ public final class Client implements Serializable {
 			 */
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-				if (connect.getText().equals("Connect")) {
+				if (connect.getText().equals(Language.getMsg("connect"))) {
 					con.newConnection();
 					session = con.getSession();
-					connect.setText("Disconnect");
+					connect.setText(Language.getMsg("disconnect"));
 					connectTab();
 				} else {
 					session.close("close");
 					con.quit();
-					connect.setText("Connect");
+					connect.setText(Language.getMsg("connect"));
 				}
 
 			}
@@ -174,8 +174,8 @@ public final class Client implements Serializable {
 		inputField = new JTextField(null, 40);
 
 		JButton submit, cancle;
-		submit = new JButton("Submit");
-		cancle = new JButton("Cancle");
+		submit = new JButton(Language.getMsg("Submit"));
+		cancle = new JButton(Language.getMsg("Cancel"));
 
 		JScrollPane scrollPane = new JScrollPane(chan,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -185,7 +185,7 @@ public final class Client implements Serializable {
 		JPanel panel2 = new JPanel();
 		JPanel panel3 = new JPanel();
 
-		panel.add(new JLabel("Channel : "), BorderLayout.WEST);
+		panel.add(new JLabel(Language.getMsg("Channel")+" : "), BorderLayout.WEST);
 		panel.add(inputField, BorderLayout.CENTER);
 
 		chanFrame.add(panel, BorderLayout.NORTH);
