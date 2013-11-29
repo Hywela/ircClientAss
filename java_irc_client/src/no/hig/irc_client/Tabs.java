@@ -107,8 +107,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 		chan = new Channel(channel, s);
 
 		list = new JList(listModel);
-		text.write("Joining Channel : " + channel, Color.BLUE, client.getSettings().getSize()
-				, client.getSettings().getFont());
+		text.write("Joining Channel : " + channel, Color.BLUE, client
+				.getSettings().getSize(), client.getSettings().getFont());
 
 		text.setEditable(false);
 
@@ -125,19 +125,20 @@ public class Tabs extends JPanel implements IRCEventListener {
 				scrollPane, scrollPane2);
 		add(split);
 		add(inputField, BorderLayout.SOUTH);
-		//Adds a MouseListerner to check stuff in the list like rigthclick ect
+		// Adds a MouseListerner to check stuff in the list like rigthclick ect
 		list.addMouseListener(buttonMouseListener);
 		/**
-		 * To speak in the channel / also room for a more /commands
-		 * like /j #channel - joins a channel
+		 * To speak in the channel / also room for a more /commands like /j
+		 * #channel - joins a channel
 		 */
 		inputField.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent b) {
 				inputField.setText("");
-				text.write(b.getActionCommand(), client.getSettings().getMyColor(),
-						client.getSettings().getSize(), client.getSettings().getFont());
+				text.write(b.getActionCommand(), client.getSettings()
+						.getMyColor(), client.getSettings().getSize(), client
+						.getSettings().getFont());
 				if (b.getActionCommand().startsWith("/")) {
 
 					String sw = b.getActionCommand().substring(1, 2);
@@ -151,22 +152,33 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 					}
 
-				} else	//Speak the truth !
+				} else
+					// Speak the truth !
 					chan.say(b.getActionCommand());
 			}
-		}); //End ActionListener
-		//adds listener for irc events
+		}); // End ActionListener
+		// adds listener for irc events
 		s.addIRCEventListener(this);
 	}// END CONSTRUCTORd
 
+	/**
+	 * Destructor for when leaving a channel
+	 * 
+	 * @param s
+	 *            (Session)
+	 */
 	public void destructor(Session s) {
 		s.getChannel(channel).part("bye");
 		s.removeIRCEventListener(this);
-
 	}
 
+	/**
+	 * Checks if the nicks is oped or not return true or false
+	 * 
+	 * @param nick
+	 * @return
+	 */
 	public boolean isUserOP(String nick) {
-
 		Channel gc = chan.getSession().getChannel(channel);
 		List<String> usersWithOP = gc.getNicksForMode(
 				ModeAdjustment.Action.PLUS, 'o');
@@ -177,6 +189,12 @@ public class Tabs extends JPanel implements IRCEventListener {
 		return false;
 	}
 
+	/**
+	 * Checks if the nicks is voiced or not return true or false
+	 * 
+	 * @param nick
+	 * @return
+	 */
 	public boolean isUserVoiced(String nick) {
 
 		Channel gc = chan.getSession().getChannel(channel);
@@ -190,24 +208,30 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 	}
 
+	/**
+	 * Sorts the Channel list Reads it into a Arraylist then clears the LisModel
+	 * list, sorts the arraylist with Collection, then reads @ into the list
+	 * then +(voiced) then the rest. Sorts the first letter So ABC then abc ...
+	 * 
+	 * @+Aa
+	 */
 	public void sortList() {
 		Object o;
 		ArrayList al = new ArrayList();
-		for (int i = 0; i < listModel.size(); i++) { // iterates through the
-														// listModel
-			o = listModel.elementAt(i); // picking out i'te element
-			al.add(o); // add it to the arraylist
+		for (int i = 0; i < listModel.size(); i++) {
+
+			o = listModel.elementAt(i);
+			al.add(o);
 		}
 
-		Collections.sort(al); // sort the arraylist
-		listModel.clear(); // clear the list
-		for (int i = 0; i < al.size(); i++) { // this is only done because +
-												// comes before @ in the ASCII
-												// table
-			o = al.get(i); // getting i'te element
-			if (((String) o).charAt(0) == '@') // if the first textelement is @
-												// for OP
-				listModel.addElement((String) o); // add to the list
+		Collections.sort(al);
+		listModel.clear();
+		for (int i = 0; i < al.size(); i++) {
+
+			o = al.get(i);
+			if (((String) o).charAt(0) == '@')
+
+				listModel.addElement((String) o);
 		}
 		for (int i = 0; i < al.size(); i++) {
 			o = al.get(i);
@@ -218,13 +242,11 @@ public class Tabs extends JPanel implements IRCEventListener {
 			o = al.get(i);
 			if (((String) o).charAt(0) != '@' && ((String) o).charAt(0) != '+')
 				listModel.addElement((String) o);
-
 		}
 	}
 
 	@Override
 	public void receiveEvent(IRCEvent e) {
-		// TODO Auto-generated method stub
 		client.setSession(e.getSession());
 
 		if (e.getType() == Type.JOIN) {
@@ -233,8 +255,9 @@ public class Tabs extends JPanel implements IRCEventListener {
 			if (channel.equals(gc.getName())) {
 				text.write(
 						"<" + joinEvent.getNick() + "> has joined the "
-								+ gc.getName(), Color.BLUE, client.getSettings().getSize()
-								,client.getSettings().getFont());
+								+ gc.getName(), Color.BLUE, client
+								.getSettings().getSize(), client.getSettings()
+								.getFont());
 				if (isUserOP(joinEvent.getNick())) {
 					listModel.addElement("@" + joinEvent.getNick());
 				} else if (isUserVoiced(joinEvent.getNick())) {
@@ -251,12 +274,12 @@ public class Tabs extends JPanel implements IRCEventListener {
 			if (channel.equals(gc.getName())) {
 
 				if (!me.getMessage().startsWith("/")) {
-					text.writeNameAndMessage
-					("<" + me.getNick() + "> ",client.getSettings().getNameColor(),
-							me.getMessage(),client.getSettings().getTekstColor(),
-							client.getSettings().getSize(), client.getSettings().getFont());
-					
-					
+					text.writeNameAndMessage("<" + me.getNick() + "> ", client
+							.getSettings().getNameColor(), me.getMessage(),
+							client.getSettings().getTekstColor(), client
+									.getSettings().getSize(), client
+									.getSettings().getFont());
+
 				}
 			}
 		} else if (e.getType() == Type.JOIN_COMPLETE) {
@@ -289,8 +312,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 					if (selected.equals(partEvent.getWho())) {
 						text.write("<" + partEvent.getWho() + "> has quit the "
-								+ gc.getName(), Color.RED, client.getSettings().getSize()
-								, client.getSettings().getFont());
+								+ gc.getName(), Color.RED, client.getSettings()
+								.getSize(), client.getSettings().getFont());
 
 						listModel.remove(i);
 					}
@@ -321,8 +344,8 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 			for (int i = 0; i > listModel.getSize(); i++) {
 				text.write(quitEvent.getNick() + "has quit the Channel",
-						Color.RED, client.getSettings().getSize()
-						, client.getSettings().getFont());
+						Color.RED, client.getSettings().getSize(), client
+								.getSettings().getFont());
 				String selected = listModel.get(i).toString();
 				if (selected.startsWith("+")) {
 					selected = selected.substring(1);
@@ -340,22 +363,24 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 		} else if (e.getType() == Type.INVITE_EVENT) {
 
-			text.write(e.getRawEventData(), Color.GREEN, client.getSettings().getSize()
-					, client.getSettings().getFont());;
+			text.write(e.getRawEventData(), Color.GREEN, client.getSettings()
+					.getSize(), client.getSettings().getFont());
+			;
 
 		} else if (e.getType() == Type.NOTICE) {
 			NoticeEvent event = (NoticeEvent) e;
 
-			text.write(event.getNoticeMessage(), Color.RED, client.getSettings().getSize()
-					, client.getSettings().getFont());
+			text.write(event.getNoticeMessage(), Color.RED, client
+					.getSettings().getSize(), client.getSettings().getFont());
 		} else if (e.getType() == Type.MODE_EVENT) {
 
 			ModeEvent modeEvent = (ModeEvent) e;
 			Channel gc = modeEvent.getChannel();
 			if (channel.equals(gc.getName())) {
 				String tmp = modeEvent.getModeAdjustments().toString();
-				text.write(modeEvent.setBy() + " sets " + tmp, Color.gray, client.getSettings().getSize()
-						, client.getSettings().getFont());
+				text.write(modeEvent.setBy() + " sets " + tmp, Color.gray,
+						client.getSettings().getSize(), client.getSettings()
+								.getFont());
 				String mod = "";
 
 				if (tmp.charAt(1) == '+') {
@@ -396,11 +421,13 @@ public class Tabs extends JPanel implements IRCEventListener {
 		}
 
 	}
-
+	/**
+	 * Mouse listener on right click in the channelList
+	 */
 	private MouseListener buttonMouseListener = new MouseAdapter() {
 		public void mousePressed(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1) {
-				if (e.getClickCount() == 2) {
+			if (e.getButton() == MouseEvent.BUTTON1) {//is mouse pressed down
+				if (e.getClickCount() == 2) {	//Double click for private tab
 					int selectedItem = list.getSelectedIndex();
 					String selected = listModel.get(selectedItem);
 					if (selected.charAt(1) == '+') {
@@ -408,32 +435,33 @@ public class Tabs extends JPanel implements IRCEventListener {
 					} else if (selected.charAt(1) == '@') {
 						selected = selected.substring(1);
 					}
-
+					
 					client.newPrivatTab(client.getSession(), selected, null);
 				}// End MouseEvent = DoubleClick
 			}// End MouseEvent = leftClick
-			if (e.getButton() == MouseEvent.BUTTON3) {
-				int selectedItem = list.getSelectedIndex();
-				String selc = listModel.get(selectedItem);
-
-				if (selc.startsWith("+")) {
+			if (e.getButton() == MouseEvent.BUTTON3) {// if right click
+				int selectedItem = list.getSelectedIndex();	//gets the item selected
+				String selc = listModel.get(selectedItem);	// Because of the way the list is @nick, +Nick , Nick  
+															//-we get an offput in the the start of the string
+				if (selc.startsWith("+")) {					// Therefore we have to switch between starting at 0 and 1 in the string.
 					selc = selc.substring(1);
 				} else if (selc.startsWith("@")) {
 					selc = selc.substring(1);
 				}
 				final String selected = selc;
+				//pops the menue up where mouse pointer is 
 				popMenue.show(e.getComponent(), e.getX(), e.getY());
-
+				// For demoting the O
 				deop.addActionListener(new ActionListener() {
-
+					
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 
 						chan.deop(selected);
 					}
 				});
-
-				kick.addActionListener(new ActionListener() {
+				// For kicking a user , with a reason tekst boks , currently this sems to be buggy can not get the KiCKEvent to work 
+				kick.addActionListener(new ActionListener() {	// Correctly
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
@@ -476,7 +504,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 
 					}
 				});
-
+				// Voicing a user
 				voice.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -485,6 +513,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 						chan.voice(selected);
 					}
 				});
+				// De voicing a user
 				devoice.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -494,6 +523,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 						chan.deVoice(selected);
 					}
 				});
+				// Promoting a user to O
 				op.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -503,7 +533,7 @@ public class Tabs extends JPanel implements IRCEventListener {
 						chan.op(selected);
 					}
 				});
-
+				// Sends a whoise request and displays it
 				whoise.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -516,13 +546,19 @@ public class Tabs extends JPanel implements IRCEventListener {
 										text.write(
 												we.getNick() + " : "
 														+ we.getHost(),
-												Color.BLUE, client.getSettings().getSize()
-												, client.getSettings().getFont());
+												Color.BLUE, client
+														.getSettings()
+														.getSize(), client
+														.getSettings()
+														.getFont());
 										text.write(
 												"Channels in : "
 														+ we.getChannelNames(),
-												Color.BLUE, client.getSettings().getSize()
-												, client.getSettings().getFont());
+												Color.BLUE, client
+														.getSettings()
+														.getSize(), client
+														.getSettings()
+														.getFont());
 									}
 								}, Type.WHOIS_EVENT);
 					}

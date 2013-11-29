@@ -25,7 +25,11 @@ import jerklib.events.NoticeEvent;
 import jerklib.events.ServerInformationEvent;
 import jerklib.events.ServerVersionEvent;
 import jerklib.listeners.IRCEventListener;
-
+/**
+ * takes care of the Connection and act as the main tab
+ * @author hyw
+ *
+ */
 public class ConnectorTab extends JPanel implements IRCEventListener {
 	private JTextField inputField;
 	public TextArea text;
@@ -51,10 +55,6 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 			// p.add(,BorderLayout.CENTER);
 			add(inputField, BorderLayout.SOUTH);
 
-		
-
-	
-		
 		inputField.addActionListener(new ActionListener() {
 
 			@Override
@@ -82,9 +82,6 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 		});
 		s.addIRCEventListener(this);
 	}// END CONSTRUCTORd
-
-
-	
 
 	@Override
 	public void receiveEvent(IRCEvent e) {

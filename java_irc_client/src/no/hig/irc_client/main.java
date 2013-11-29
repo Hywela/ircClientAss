@@ -17,22 +17,24 @@ public class main extends JFrame{
 private int tabcount=0;
 private Client client;
 private JFrame frame;
+Prefs p;
 	private main(){
 	 frame = new JFrame("");
 	client = client.getInstance();
 	client.serFrame(frame);
 		fileMenu();
-		Prefs p = new Prefs();
-		if(p.getUsername().equals("")){
+		p = new Prefs();
+
+		if( p.getUsername().equals("")){
 			profileMenu();
 		}
 	}	
 public void newTab(){
-client.joinChannel("#test_hywel");
+
 	
 }
-public void newChannelTab(){
-	client.settings();
+public void ChannelList(){
+	client.chanelList();
 }
 	 public static void main(String[] args) {
 		 
@@ -43,7 +45,7 @@ public void newChannelTab(){
 	            public void run(){
 	                //Turn off metal's use of bold fonts
 	             UIManager.put("swing.boldMetal", Boolean.FALSE);
-	              new main().newTab();
+	              new main();
 	             
 	            }
 	        });
@@ -85,7 +87,7 @@ public void newChannelTab(){
          JMenuItem serverListAction = new JMenuItem(Language.getMsg("serverList"));
          JMenuItem channelListAction = new JMenuItem(Language.getMsg("channelList"));
          JMenuItem profileSettingsAction = new JMenuItem(Language.getMsg("profileSettings"));
-         JMenuItem conAction = new JMenuItem("newConnection");
+         JMenuItem conAction = new JMenuItem("Channel List");
          JMenuItem importServers = new JMenuItem(Language.getMsg("importServers"));
          JMenuItem exitAction = new JMenuItem(Language.getMsg("exit"));
          JMenuItem newItemAction = new JMenuItem(Language.getMsg("add"));
@@ -120,8 +122,8 @@ public void newChannelTab(){
          
          conAction.addActionListener(new ActionListener(){
         	  public void actionPerformed(ActionEvent ae) {
-        		  //newChannelTab();
-				  client.settings();
+        		 
+        		  ChannelList();
         	  }
         	 
         	 

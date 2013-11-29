@@ -15,14 +15,25 @@ import jerklib.events.MessageEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.tasks.TaskImpl;
 
+/**
+ * Private messaging tab
+ * 
+ * @author hyw
+ * 
+ */
 public class PrivateMessage extends JPanel {
 	private JTextField inputField;
-	public TextArea text;
+	TextArea text;
 	private Client client = Client.getInstance();
-	public String pmNick;
+	private String pmNick;
 
 	boolean notChat;
-
+	/**
+	 * 
+	 * @param borderLayout
+	 * @param s(session)
+	 * @param pmNick
+	 */
 	public PrivateMessage(BorderLayout borderLayout, final Session s,
 			final String pmNick) {
 		// TODO Auto-generated constructor stub
@@ -36,7 +47,7 @@ public class PrivateMessage extends JPanel {
 		notChat = false;
 
 		text.write("Joining Private message with  : " + pmNick, Color.BLUE,
-				client.getSettings().getSize(),client.getSettings().getFont() );
+				client.getSettings().getSize(), client.getSettings().getFont());
 		text.setEditable(false);
 
 		JScrollPane scrollPane = new JScrollPane(text,
@@ -49,12 +60,13 @@ public class PrivateMessage extends JPanel {
 		add(inputField, BorderLayout.SOUTH);
 
 		inputField.addActionListener(new ActionListener() {
-
+			
 			@Override
 			public void actionPerformed(ActionEvent b) {
 				inputField.setText("");
-				text.write(b.getActionCommand(), client.getSettings().getMyColor(),
-						client.getSettings().getSize(),client.getSettings().getFont() );
+				text.write(b.getActionCommand(), client.getSettings()
+						.getMyColor(), client.getSettings().getSize(), client
+						.getSettings().getFont());
 				System.out.println(b.getActionCommand());
 
 				if (b.getActionCommand().startsWith("/")) {
@@ -73,7 +85,7 @@ public class PrivateMessage extends JPanel {
 					}
 
 				} else
-
+					
 					s.sayPrivate(pmNick, b.getActionCommand());
 			}
 		});
@@ -85,8 +97,9 @@ public class PrivateMessage extends JPanel {
 				client = Client.getInstance();
 				MessageEvent pm = (MessageEvent) e; // message event
 				if (pm.getNick().equals(pmNick)) {
-					text.write(pm.getMessage(), client.getSettings().getTekstColor(),
-							client.getSettings().getSize(),client.getSettings().getFont() );
+					text.write(pm.getMessage(), client.getSettings()
+							.getTekstColor(), client.getSettings().getSize(),
+							client.getSettings().getFont());
 				}
 
 			}

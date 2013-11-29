@@ -41,21 +41,44 @@ import jerklib.events.MessageEvent;
 import jerklib.events.IRCEvent.Type;
 import jerklib.tasks.TaskImpl;
 
+/**
+ * A singleton class that handles Most of the initating of all kind
+ * 
+ * @author hyw
+ * 
+ */
 public final class Client implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
+	/**
+	 * A vector with privat message tabs
+	 */
 	private static Vector<String> pmVec;
 
+	/**
+	 * A annoymus inner class with that makes a new Client()
+	 * 
+	 * @author hyw
+	 * 
+	 */
 	private static class clientLoader {
 		private static final Client INSTANCE = new Client();
 	}
 
+	/**
+	 * Constructor Makes sure the client is onlye made once
+	 */
 	private Client() {
 		if (clientLoader.INSTANCE != null) {
 			throw new IllegalStateException("Already instantiated");
 		}
 	}
 
+	/**
+	 * Returns the instance of Client.
+	 * 
+	 * @return
+	 */
 	public static Client getInstance() {
 		return clientLoader.INSTANCE;
 	}
@@ -64,39 +87,48 @@ public final class Client implements Serializable {
 	private Client readResolve() {
 		return clientLoader.INSTANCE;
 	}
+
+	// variables
 	private sizzySettings settings;
 	private Connector con = null;
 	private Session session = null;
-	private JFrame frame;
 	private final JTabbedPane pane = new JTabbedPane();
 	private final JButton connect = new JButton("Connect");
 	private DefaultListModel<String> chanModel;
 	private JList<DefaultListModel<String>> chan;
 	private JTextField inputField;
-	private JFrame chanFrame, settingsFrame;
+	private JFrame chanFrame, settingsFrame, frame;
+
+	/**
+	 * Constructor Takes a frame from main to show stuff with
+	 * 
+	 * @param frame
+	 */
 	public void serFrame(JFrame frame) {
-		settings = new sizzySettings(settingsFrame= new JFrame()); 
+		settings = new sizzySettings(settingsFrame = new JFrame());
 		pmVec = new Vector<String>();
 		this.frame = frame;
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			con = new Connector();
-			connect.addActionListener(new java.awt.event.ActionListener() {
+		con = new Connector();
+		connect.addActionListener(new java.awt.event.ActionListener() {
+			/**
+			 * the Connect button ...
+			 */
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 
-				public void actionPerformed(java.awt.event.ActionEvent evt) {
-
-					if (connect.getText().equals("Connect")) {
-						con.newConnection();
-						session = con.getSession();
-						connect.setText("Disconnect");
-						connectTab();
-					} else {
-						session.close("close");
-						con.quit();
-						connect.setText("Connect");
-					}
-
+				if (connect.getText().equals("Connect")) {
+					con.newConnection();
+					session = con.getSession();
+					connect.setText("Disconnect");
+					connectTab();
+				} else {
+					session.close("close");
+					con.quit();
+					connect.setText("Connect");
 				}
-			});
+
+			}
+		});
 
 		this.frame.add(connect, BorderLayout.NORTH);
 		this.frame.add(pane);
@@ -105,111 +137,162 @@ public final class Client implements Serializable {
 		frame.setVisible(true);
 
 	}
-	
-public void settings(){
-	settings.show();
-}
-public void setSession(Session session){
-	this.session =  session;
-}
-public Session getSession(){
-	return session;
-}
-	public void chanelList(){
+
+	/**
+	 * shows the settings menue
+	 */
+	public void settings() {
+		settings.show();
+	}
+
+	/**
+	 * Sets the Session to a session
+	 * 
+	 * @param session
+	 */
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	/**
+	 * returns a session
+	 * 
+	 * @return
+	 */
+	public Session getSession() {
+		return session;
+	}
+
+	/**
+	 * Opens a new channellist and loads the channels with more than 100? in it;
+	 */
+	public void chanelList() {
 		chanModel = new DefaultListModel<String>();
-
-
 		chan = new JList(chanModel);
 		session.chanList();
 		chanFrame = new JFrame();
-		 inputField = new JTextField(null,40);
-	
+		inputField = new JTextField(null, 40);
+
 		JButton submit, cancle;
 		submit = new JButton("Submit");
-		cancle = new JButton("Cancle");	
-		
+		cancle = new JButton("Cancle");
+
 		JScrollPane scrollPane = new JScrollPane(chan,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
-		
-		
-	JPanel panel = new JPanel();
-	JPanel panel2 = new JPanel();
-	JPanel panel3 = new JPanel();
-	
 
+		JPanel panel = new JPanel();
+		JPanel panel2 = new JPanel();
+		JPanel panel3 = new JPanel();
 
-		panel.add(new JLabel("Channel : "),BorderLayout.WEST);
+		panel.add(new JLabel("Channel : "), BorderLayout.WEST);
 		panel.add(inputField, BorderLayout.CENTER);
 
 		chanFrame.add(panel, BorderLayout.NORTH);
-	
-panel2.add(scrollPane,BorderLayout.WEST);
-panel2.add(new JLabel("List : "), BorderLayout.CENTER);
 
-chanFrame.add(panel2, BorderLayout.CENTER);	    
+		panel2.add(scrollPane, BorderLayout.WEST);
+		panel2.add(new JLabel("List : "), BorderLayout.CENTER);
 
-panel3.add(cancle, BorderLayout.EAST);
-panel3.add(submit, BorderLayout.WEST);
+		chanFrame.add(panel2, BorderLayout.CENTER);
 
-chanFrame.add(panel3, BorderLayout.SOUTH);
+		panel3.add(cancle, BorderLayout.EAST);
+		panel3.add(submit, BorderLayout.WEST);
 
-chan.addMouseListener(listListener);
-submit.addActionListener(submitAction);
-cancle.addActionListener(cancleAction);
+		chanFrame.add(panel3, BorderLayout.SOUTH);
 
-chanFrame.pack();
-chanFrame.setAlwaysOnTop(true);
-		//frame.setSize(new Dimension(700, 300));
-chanFrame.setLocationRelativeTo(null);
-chanFrame.setVisible(true);
-		
+		chan.addMouseListener(listListener);
+		submit.addActionListener(submitAction);
+		cancle.addActionListener(cancleAction);
+
+		chanFrame.pack();
+		chanFrame.setAlwaysOnTop(true);
+		// frame.setSize(new Dimension(700, 300));
+		chanFrame.setLocationRelativeTo(null);
+		chanFrame.setVisible(true);
+
 	}
-	public void addToChanList(String add){
+
+	/**
+	 * Adds channels to the channel list
+	 * 
+	 * @param add
+	 */
+	public void addToChanList(String add) {
 		chanModel.addElement(add);
 	}
-	
+
+	/**
+	 * A new Channel tab is made
+	 * 
+	 * @param sess
+	 * @param channel
+	 */
 	public void newTab(Session sess, String channel) {
-		if(pane.getTabCount() > 0){
-		Tabs p = new Tabs(new BorderLayout(), sess, channel);
-		pane.add(channel, p);
-		initiCLoseTabCode(channel);
+		if (pane.getTabCount() > 0) {
+			Tabs p = new Tabs(new BorderLayout(), sess, channel);
+			pane.add(channel, p);
+			initiCLoseTabCode(channel);
 		}
 
 	}
 
+	/**
+	 * the Connector tab (main tab)
+	 */
 	private void connectTab() {
-		if(pane.getTabCount() < 1){
-		ConnectorTab p = new ConnectorTab(new BorderLayout(),session);
-		pane.addTab("connector", p);
-		initiCLoseTabCode("connector");}
+		if (pane.getTabCount() < 1) {
+			ConnectorTab p = new ConnectorTab(new BorderLayout(), session);
+			pane.addTab("connector", p);
+			initiCLoseTabCode("connector");
+		}
 	}
 
+	/**
+	 * joins a channel and calls a new tab for that channel
+	 * 
+	 * @param chan
+	 */
 	public void joinChannel(String chan) {
-		boolean join=true;
-		if(pane.getTabCount() > 0){
-		for (int i = 0 ; i<pane.getComponentCount()-1; i++){
-			if(pane.getTitleAt(i).equals(chan))
-				join = false;
+		boolean join = true;
+		if (pane.getTabCount() > 0) {
+			for (int i = 0; i < pane.getComponentCount() - 1; i++) {
+				if (pane.getTitleAt(i).equals(chan))
+					join = false;
+			}
+
+			if (join) {
+				session.join(chan);
+				newTab(session, chan);
+
+			}
 		}
-		
-		if(join){
-		session.join(chan);
-		newTab(session, chan);
-	
-		}}
-}
-public sizzySettings getSettings(){
-	return settings;
-}
+	}
+
+	/**
+	 * returns the settings instance
+	 * 
+	 * @return
+	 */
+	public sizzySettings getSettings() {
+		return settings;
+	}
+
+	/**
+	 * Makes a new Private Message Tab
+	 * 
+	 * @param s
+	 *            (Session)
+	 * @param nick
+	 * @param o_msg
+	 *            (message)
+	 */
 	public void newPrivatTab(Session s, String nick, String o_msg) {
 		PrivateMessage p = new PrivateMessage(new BorderLayout(), s, nick);
 		pane.add(nick, p);
-		if (o_msg != null){
-			
-			p.text.write(o_msg, settings.getTekstColor(), settings.getSize()
-					, settings.getFont());
+		if (o_msg != null) {
+
+			p.text.write(o_msg, settings.getTekstColor(), settings.getSize(),
+					settings.getFont());
 		}
 		pmVec.add(nick);
 		initiCLoseTabCode(nick);
@@ -217,6 +300,11 @@ public sizzySettings getSettings(){
 
 	}
 
+	/**
+	 * finds the private message counterpart nick and deletes it when tabs close
+	 * 
+	 * @param s
+	 */
 	public void deleteNick(String s) {
 
 		for (int i = 0; i < pmVec.size(); i++) {
@@ -226,6 +314,12 @@ public sizzySettings getSettings(){
 
 	}
 
+	/**
+	 * Finds the nick if it finds it return tru or else false
+	 * 
+	 * @param s
+	 * @return
+	 */
 	public boolean findNick(String s) {
 		for (int i = 0; i < pmVec.size(); i++) {
 			if (pmVec.get(i).equals(s))
@@ -234,6 +328,11 @@ public sizzySettings getSettings(){
 		return false;
 	}
 
+	/**
+	 * Takes a channel name and initi the tabs, adds a close button
+	 * 
+	 * @param chan
+	 */
 	public void initiCLoseTabCode(String chan) {
 
 		JPanel pnlTab = new JPanel(new GridBagLayout());
@@ -254,10 +353,10 @@ public sizzySettings getSettings(){
 		btnClose.addMouseListener(buttonMouseListener);
 		btnClose.addActionListener(actionListerner);
 	}
-	public void getMessage(String nick, String msg){
-		
-		
-	}
+
+	/**
+	 * Mouselistern for the tab close button(x)paints the tab
+	 */
 	private final static MouseListener buttonMouseListener = new MouseAdapter() {
 		public void mouseEntered(MouseEvent e) {
 			Component component = e.getComponent();
@@ -267,6 +366,9 @@ public sizzySettings getSettings(){
 			}
 		}
 
+		/**
+		 * returns the paint on the tab to normal
+		 */
 		public void mouseExited(MouseEvent e) {
 			Component component = e.getComponent();
 			if (component instanceof AbstractButton) {
@@ -278,6 +380,10 @@ public sizzySettings getSettings(){
 		}
 
 	};
+	/**
+	 * If a chat tab is closed , defer betwen private and normal tab, connector
+	 * tab wont be closed untile program exit
+	 */
 	public ActionListener actionListerner = new ActionListener() {
 
 		@Override
@@ -285,34 +391,33 @@ public sizzySettings getSettings(){
 			// TODO Auto-generated method stub
 			int index = pane.getSelectedIndex();
 			if (index >= 1) {
-				
-				if(pane.getTitleAt(index).startsWith("#")){
+
+				if (pane.getTitleAt(index).startsWith("#")) {
 					Tabs p = (Tabs) pane.getComponentAt(index);
 					p.destructor(session);
 					pane.remove(index);
-				}else{
-				deleteNick(pane.getTitleAt(index));	pane.remove(index);
+				} else {
+					deleteNick(pane.getTitleAt(index));
+					pane.remove(index);
 				}
-			
-				
+
 			}
 		}
 	};
-	
+
 	/**
-	 *	 Joins the channel from the inputfield
-	 *	 and exits the window
+	 * Joins the channel from the inputfield and exits the window
 	 */
 	public ActionListener submitAction = new ActionListener() {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			joinChannel(inputField.getText());
-		
+
 			chanFrame.setVisible(false);
 		}
 	};
-	
+
 	/**
 	 * sets the frame invisible
 	 */
@@ -320,22 +425,20 @@ public sizzySettings getSettings(){
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			chanFrame.setVisible(false);
-				
-			
+
 		}
 	};
 	/**
-	 * MouseListener listListener 
-	 * Is a listener on rigth click then it finds the text
-	 * clicked on and outputs it in inputfield.
+	 * MouseListener listListener Is a listener on rigth click then it finds the
+	 * text clicked on and outputs it in inputfield.
 	 */
 	private MouseListener listListener = new MouseAdapter() {
-		public void mousePressed( MouseEvent e ) {  
-			if(e.getButton() == MouseEvent.BUTTON1){
-				
+		public void mousePressed(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON1) {
+
 				int index = chan.getSelectedIndex();
 				inputField.setText(chanModel.get(index));
-				
+
 			}
 		}
 	};
