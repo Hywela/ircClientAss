@@ -132,8 +132,8 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 				KickEvent kickEvent = (KickEvent) e;
 				Channel gc = kickEvent.getChannel();
 		
-				text.write("<" + kickEvent.getWho() + "> has been kicked by "
-						+ kickEvent.byWho() + " Reason(\""+kickEvent.getMessage()+"\")"
+				text.write("<" + kickEvent.getWho() + "> "+Language.getMsg("wasKickedBy")+" "
+						+ kickEvent.byWho() + " "+Language.getMsg("reason")+"(\""+kickEvent.getMessage()+"\")"
 						, Color.RED,client.getSettings().getSize(), client.getSettings().getFont());
 			
 				
