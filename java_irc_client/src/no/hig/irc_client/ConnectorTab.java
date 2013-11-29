@@ -91,7 +91,7 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 		
 				ChannelListEvent event = (ChannelListEvent) e;
 		
-				if(event.getNumberOfUser() > 500) // incase there are a Billion channels 
+				if(event.getNumberOfUser() > 100) // incase there are a Billion channels 
 					//-on a server
 				client.addToChanList(event.getChannelName());
 			}

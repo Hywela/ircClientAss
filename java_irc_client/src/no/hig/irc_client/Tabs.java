@@ -399,9 +399,10 @@ public class Tabs extends JPanel implements IRCEventListener {
 						mod = "";
 					}
 				}
-
-				String userName = "" + tmp.subSequence(4, tmp.length() - 1);
-
+				String userName="" ;
+				if(tmp.length() > 4){
+			 userName = "" + tmp.subSequence(4, tmp.length() - 1);
+				}
 				for (int i = 0; i < listModel.getSize(); i++) {
 					String selected = listModel.get(i).toString();
 					if (selected.startsWith("+")) {

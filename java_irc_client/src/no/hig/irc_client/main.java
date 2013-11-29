@@ -87,7 +87,7 @@ public void ChannelList(){
          JMenuItem serverListAction = new JMenuItem(Language.getMsg("serverList"));
          JMenuItem channelListAction = new JMenuItem(Language.getMsg("channelList"));
          JMenuItem profileSettingsAction = new JMenuItem(Language.getMsg("profileSettings"));
-         JMenuItem conAction = new JMenuItem("Channel List");
+         JMenuItem conAction = new JMenuItem("Settings");
          JMenuItem importServers = new JMenuItem(Language.getMsg("importServers"));
          JMenuItem exitAction = new JMenuItem(Language.getMsg("exit"));
          JMenuItem newItemAction = new JMenuItem(Language.getMsg("add"));
@@ -116,14 +116,14 @@ public void ChannelList(){
 
          channelListAction.addActionListener(new ActionListener() {
              public void actionPerformed(ActionEvent ae) {
-            	 
+            	 ChannelList();
              }
      });
          
          conAction.addActionListener(new ActionListener(){
         	  public void actionPerformed(ActionEvent ae) {
         		 
-        		  ChannelList();
+        		  client.settings();
         	  }
         	 
         	 
