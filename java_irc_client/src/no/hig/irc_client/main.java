@@ -90,8 +90,6 @@ public void ChannelList(){
          JMenuItem conAction = new JMenuItem(Language.getMsg("Settings"));
          JMenuItem importServers = new JMenuItem(Language.getMsg("importServers"));
          JMenuItem exitAction = new JMenuItem(Language.getMsg("exit"));
-         JMenuItem newItemAction = new JMenuItem(Language.getMsg("add"));
-         JMenuItem deleteItemAction = new JMenuItem(Language.getMsg("delete"));
 
          // file menu buttons
          fileMenu.add(serverListAction);
@@ -103,8 +101,6 @@ public void ChannelList(){
 
          // edit menu buttons
          editMenu.add(profileSettingsAction);
-         editMenu.add(newItemAction);
-         editMenu.add(deleteItemAction);
 
          // file menu actions
          serverListAction.addActionListener(new ActionListener() {
