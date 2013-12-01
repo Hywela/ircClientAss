@@ -1,25 +1,20 @@
 package no.hig.irc_client;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,19 +22,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SpringLayout.Constraints;
 
-import jerklib.Channel;
 import jerklib.Session;
-import jerklib.events.ChannelListEvent;
-import jerklib.events.IRCEvent;
-import jerklib.events.MessageEvent;
-import jerklib.events.IRCEvent.Type;
-import jerklib.tasks.TaskImpl;
 
 /**
  * A singleton class that handles Most of the initating of all kind
@@ -388,7 +374,6 @@ public final class Client implements Serializable {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
 			int index = pane.getSelectedIndex();
 			if (index >= 1) {
 

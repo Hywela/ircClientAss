@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -11,8 +12,8 @@ import javax.swing.ScrollPaneConstants;
 
 import jerklib.Session;
 import jerklib.events.IRCEvent;
-import jerklib.events.MessageEvent;
 import jerklib.events.IRCEvent.Type;
+import jerklib.events.MessageEvent;
 import jerklib.tasks.TaskImpl;
 
 /**

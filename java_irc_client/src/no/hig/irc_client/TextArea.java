@@ -2,15 +2,12 @@ package no.hig.irc_client;
 
 import java.awt.Color;
 
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.Scrollable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;

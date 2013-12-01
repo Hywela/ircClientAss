@@ -1,11 +1,14 @@
 package no.hig.irc_client;
 
+import java.awt.Color;
 import java.util.prefs.Preferences;
 
 public class Prefs {
 	private Preferences prefs;
-	private String defaultServer;
+	private String defaultServer, defFont;
 	private int defaultPort;
+	private int defT_color,defN_color,defM_color;
+	private int defSize;
 	
     /**
      * Creates node and declares default values
@@ -16,6 +19,13 @@ public class Prefs {
     	
     	defaultServer = "uk.quakenet.org";
     	defaultPort = 6667;
+    	defSize = 12;
+    	defFont = "Verdana";
+    	
+    	//default colors
+    	defT_color = Color.black.getRGB();
+		defN_color = Color.blue.getRGB();
+		defM_color = Color.DARK_GRAY.getRGB();
     }
     
     /**
@@ -27,6 +37,34 @@ public class Prefs {
     public void saveLastServer(String url, int port){
     	setLastServer(url);
     	setLastPort(port);
+    }
+    
+    public void saveSettings(int t_color, int n_color, int m_color, int size, String font){
+    	prefs.putInt("t_color", t_color);
+    	prefs.putInt("n_color", n_color);
+    	prefs.putInt("m_color", m_color);
+    	prefs.putInt("fontSize", size);
+    	prefs.put("font", font);
+    }
+    
+    public int getTcolor(){
+    	return prefs.getInt("t_color", defT_color);
+    }
+    
+    public int getNcolor(){
+    	return prefs.getInt("n_color", defN_color);
+    }
+    
+    public int getMcolor(){
+    	return prefs.getInt("m_color", defM_color);
+    }
+    
+    public int getFontSize(){
+    	return prefs.getInt("fontSize", defSize);
+    }
+    
+    public String getFont(){
+    	return prefs.get("font", defFont);
     }
     
     public String getLastServer(){

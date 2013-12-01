@@ -2,10 +2,9 @@ package no.hig.irc_client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,15 +12,13 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import jerklib.Channel;
-import jerklib.ServerInformation;
 import jerklib.Session;
 import jerklib.events.ChannelListEvent;
 import jerklib.events.ConnectionLostEvent;
 import jerklib.events.ErrorEvent;
 import jerklib.events.IRCEvent;
-import jerklib.events.KickEvent;
 import jerklib.events.IRCEvent.Type;
-import jerklib.events.NoticeEvent;
+import jerklib.events.KickEvent;
 import jerklib.events.ServerInformationEvent;
 import jerklib.events.ServerVersionEvent;
 import jerklib.listeners.IRCEventListener;
@@ -61,7 +58,7 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 			public void actionPerformed(ActionEvent b) {
 				// TODO Auto-generated method stub
 				inputField.setText("");
-				text.write(b.getActionCommand(), Color.BLACK,
+				text.write(b.getActionCommand(), client.getSettings().getMyColor(),
 						client.getSettings().getSize(), client.getSettings().getFont());
 				if (b.getActionCommand().startsWith("/")) {
 
@@ -75,9 +72,7 @@ public class ConnectorTab extends JPanel implements IRCEventListener {
 					}
 
 					}
-
-				} else
-					chan.say(b.getActionCommand());
+				}
 			}
 		});
 		s.addIRCEventListener(this);

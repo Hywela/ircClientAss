@@ -1,7 +1,6 @@
 package no.hig.irc_client;
 
 import jerklib.ConnectionManager;
-import jerklib.Profile;
 import jerklib.Session;
 
 /**
@@ -35,9 +34,7 @@ public class Connector {
 		 * object. The Session is the main way users will interact with this
 		 * library and IRC networks
 		 */
-
-		System.out.println(p.getLastServer());
-		System.out.println(p.getLastPort());
+		
 		session = manager.requestConnection(p.getLastServer(), p.getLastPort());
 		/*
 		 * JerkLib fires IRCEvents to notify users of the lib of incoming events

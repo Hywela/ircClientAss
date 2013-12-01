@@ -3,11 +3,9 @@ package no.hig.irc_client;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -16,36 +14,57 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * Set Color and font settings
+ * 
+ * @author hyw
+ * @author Uhu
+ *
+ */
 public class sizzySettings  {
-	private String font = "Verdana";
+	String font = "Verdana";
 	private int size = 20;
-	ColorPicker picker;
-	Color t_color,n_color,m_color;
+	Color t_color,n_color,m_color,nt_color,nn_color,nm_color;;
 	JFrame frame = new JFrame();	
 	private String[] sizeDesc = { "8","10","12", "14","18","20","22" };
 	 private String[] description = { "BLUE", "GREEN", "BLACK" };
 	 private String[] fontDesc = {};
+	 private String nFont;
+	 int nSize;
+	 Prefs pref;
+	 
+	/**
+	 * Open settings window
+	 * 
+	 * @param frame
+	 */
 	public sizzySettings(JFrame frame) {
 	    // Font info is obtained from the current graphics environment.
   	  GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         //--- Get an array of font names (smaller than the number of fonts)
-  	fontDesc = ge.getAvailableFontFamilyNames();
- 
-
-		
-		t_color = Color.black;
-		n_color = Color.blue;
-		m_color = Color.DARK_GRAY;
+  	  fontDesc = ge.getAvailableFontFamilyNames();
+  	  pref = new Prefs();
+  	
+		t_color = new Color(pref.getTcolor());
+		n_color = new Color(pref.getNcolor());
+		m_color = new Color(pref.getMcolor());
+		size = pref.getFontSize();
+		nSize = size;
+		font = pref.getFont();
+		nFont = font;
+		nt_color = t_color;
+		nn_color = n_color;
+		nm_color = m_color;
 		this.frame = frame;
 		
 		JPanel panel = new JPanel();
-		panel.add(new JLabel("Tekst Color : "));
+		panel.add(new JLabel(Language.getMsg("textColor")+" : "));
 	
 		JPanel panel1 = new JPanel();
-		panel1.add(new JLabel("Name Color : "));
+		panel1.add(new JLabel(Language.getMsg("nameColor")+" : "));
 	
 		JPanel panel2 = new JPanel();
-		panel2.add(new JLabel("My Color : "));
+		panel2.add(new JLabel(Language.getMsg("myColor")+" : "));
 	
 		
 		final DefaultComboBoxModel fontmodel = new DefaultComboBoxModel(fontDesc);
@@ -57,21 +76,22 @@ public class sizzySettings  {
 	        JComboBox comboBox1 = new JComboBox(model2);
 	        JComboBox comboBox2 = new JComboBox(model3);
 	        JComboBox SizecomboBox = new JComboBox(Sizemodel);
-	        JComboBox fontcombo = new JComboBox(fontDesc);
+	        JComboBox fontcombo = new JComboBox(fontmodel);
 	        panel.add(comboBox);
 	        panel1.add(comboBox1);
 	        panel2.add(comboBox2);
 	        JPanel sizeP = new JPanel();
-	        sizeP.add(new JLabel("Size : "));
+	        sizeP.add(new JLabel(Language.getMsg("Size") +" : "));
 	        sizeP.add(SizecomboBox);
 	        sizeP.add(fontcombo);
+	        fontmodel.setSelectedItem(pref.getFont());
+	        Sizemodel.setSelectedItem(""+pref.getFontSize());
 	        
 	        fontcombo.addActionListener(new ActionListener() {
-				
+			
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					font = fontmodel.getSelectedItem().toString();
-					System.out.println(font);
+					nFont = fontmodel.getSelectedItem().toString();
 				}
 			});
 	    
@@ -82,12 +102,12 @@ public class sizzySettings  {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				  if(model.getSelectedItem().toString().equals("GREEN"))
-		        	  t_color= Color.GREEN;
+				if(model.getSelectedItem().toString().equals("GREEN"))
+		        	  nt_color= Color.GREEN;
 		        else if(model.getSelectedItem().toString().equals("BLACK"))
-		        	  t_color= Color.GREEN;
+		        	  nt_color= Color.GREEN;
 		        else if(model.getSelectedItem().toString().equals("BLUE"))
-		        	  t_color= Color.BLUE;
+		        	  nt_color= Color.BLUE;
 				
 			}
 		});
@@ -96,11 +116,11 @@ public class sizzySettings  {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				  if(model2.getSelectedItem().toString().equals("GREEN"))
-		        	  n_color= Color.GREEN;
+		        	  nn_color= Color.GREEN;
 		        else if(model2.getSelectedItem().toString().equals("BLACK"))
-		        	  n_color= Color.GREEN;
+		        	  nn_color= Color.GREEN;
 		        else if(model2.getSelectedItem().toString().equals("BLUE"))
-		        	  n_color= Color.BLUE;
+		        	  nn_color= Color.BLUE;
 			}
 		});
 	    comboBox2.addActionListener(new ActionListener() {
@@ -108,11 +128,11 @@ public class sizzySettings  {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				  if(model3.getSelectedItem().toString().equals("GREEN"))
-		        	  m_color= Color.GREEN;
+		        	  nm_color= Color.GREEN;
 		        else if(model3.getSelectedItem().toString().equals("BLACK"))
-		        	  m_color= Color.GREEN;
+		        	  nm_color= Color.GREEN;
 		        else if(model3.getSelectedItem().toString().equals("BLUE"))
-		        	  m_color= Color.BLUE;
+		        	  nm_color= Color.BLUE;
 				
 			}
 		});
@@ -121,7 +141,7 @@ public class sizzySettings  {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
-				size = Integer.parseInt(Sizemodel.getSelectedItem().toString());
+				nSize = Integer.parseInt(Sizemodel.getSelectedItem().toString());
 			}
 		});
 	      
@@ -138,8 +158,8 @@ public class sizzySettings  {
 		frame.add(sizeP, BorderLayout.CENTER);
 		JPanel last = new JPanel();
 		JButton submit, cancel;
-		submit = new JButton("Save");
-		cancel = new JButton("Cancel");
+		submit = new JButton(Language.getMsg("Submit"));
+		cancel = new JButton(Language.getMsg("Cancel"));
 		last.add(submit, BorderLayout.WEST);
 		last.add(cancel, BorderLayout.EAST);
 		frame.add(last, BorderLayout.SOUTH);
@@ -147,8 +167,13 @@ public class sizzySettings  {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				t_color = nt_color;
+				n_color = nn_color;
+				m_color = nm_color;
+				font = nFont;
+				size = nSize;
+				pref.saveSettings(t_color.getRGB(), n_color.getRGB(), m_color.getRGB(), size, font);
 				hide();
-				
 			}
 		});
 		cancel.addActionListener(new ActionListener() {
@@ -166,25 +191,45 @@ public class sizzySettings  {
 	public void show(){
 		frame.setVisible(true);
 	}
+	
+	
+	/**
+	 * Hide Frame
+	 */
 	public void hide(){
 		frame.setVisible(false);
 	}
+    /**
+     * @return text color
+     */
     public Color getTekstColor(){
     	
     	return t_color;
     }
+    /**
+     * @return name color 
+     */
     public Color getNameColor(){
     	
     	return n_color;
     }
+	/**
+	 * @return my texts color
+	 */
 	public Color getMyColor() {
 	
 		return m_color;
 	}
+	/**
+	 * @return font size
+	 */
 	public int getSize() {
 		
 		return size;
 	}
+	/**
+	 * @return font type
+	 */
 	public String getFont() {
 		
 		return font;
